@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.ImagingOpException;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -44,6 +45,12 @@ public class MainFrame extends JFrame implements ActionListener {
 	private Screen screen;
 	private JButton[] colorButtons;
 	private JButton selectColorButton;
+	private JButton [] buttons;
+	
+	ImageIcon iconDot = new ImageIcon("res/dot.png");
+	ImageIcon iconLine = new ImageIcon("res/line.png");
+	ImageIcon iconCircle = new ImageIcon("res/circle.png");
+	ImageIcon iconSquare = new ImageIcon("res/square.png");
 	
 	public MainFrame() {
 		// TODO Auto-generated constructor stub
@@ -69,6 +76,26 @@ public class MainFrame extends JFrame implements ActionListener {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		for (int i = 0; i < buttons.length; i++) {
+		    final int mode = i; // 현재 버튼에 대한 모드 저장
+		    buttons[i].addActionListener(e -> {
+		        switch (mode) {
+		            case 0: // 점 버튼
+		                screen.setDrawMode(Screen.POINT);
+		                break;
+		            case 1: // 선 버튼
+		                screen.setDrawMode(Screen.LINE);
+		                break;
+		            case 2: // 원 버튼
+		                screen.setDrawMode(Screen.CIRCLE);
+		                break;
+		            case 3: // 네모 버튼
+		                screen.setDrawMode(Screen.RECTANGLE);
+		                break;
+		        }
+		    });
+		}
+		
 		
 	}
 	
@@ -78,35 +105,75 @@ public class MainFrame extends JFrame implements ActionListener {
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		JPanel groupDrawBox = new JPanel();
 		groupDrawBox.setLayout(new GridLayout(3,4));
-		ImageIcon iconClose = new ImageIcon("res/close.png");
-		iconClose = new ImageIcon(
-				iconClose.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-		JButton [] buttons = new JButton[12];
-		for(int i=0; i<12; i++) {
-			buttons[i] = new JButton(iconClose);
-			JButton toolButton = buttons[i];
-			toolButton.setPreferredSize(new Dimension(20,20));
-			groupDrawBox.add(toolButton);
+		
+		ImageIcon[] icons = {
+			    new ImageIcon("res/dot.png"),
+			    new ImageIcon("res/line.png"),
+			    new ImageIcon("res/circle.png"),
+			    new ImageIcon("res/square.png")
+		};
+		
+		for (int i = 0; i < icons.length; i++) {
+		    icons[i] = new ImageIcon(icons[i].getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
 		}
 		
+		buttons = new JButton[12];
+		// 버튼 생성 및 아이콘 설정
+		// createToolBar 메서드 안에서
+		 for (int i = 0; i < 4; i++) {
+		        buttons[i] = new JButton(icons[i]);
+		        buttons[i].setPreferredSize(new Dimension(20, 20));
+				buttons[i].addActionListener(this);
+		        
+		        // 버튼에 ActionListener 추가
+		        buttons[i].addActionListener(e -> {
+		            // 모든 버튼 테두리를 기본색으로 리셋
+		            for (JButton button : buttons) {
+		                button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1)); // 기본 테두리
+		            }
+		            // 현재 눌린 버튼의 테두리를 두껍게 설정
+		            ((JButton)e.getSource()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 3)); // 두꺼운 검정색 테두리
+		        });
+		        groupDrawBox.add(buttons[i]);
+		    }
+		
+		
+		for (int i = 4; i < buttons.length; i++) {
+		    buttons[i] = new JButton(); // 빈 버튼 생성
+		    buttons[i].setPreferredSize(new Dimension(20, 20));
+		    groupDrawBox.add(buttons[i]);
+		}
+		
+		
+		//선택한 색상 보이게 하는 패널
 		JPanel groupSelectColor = new JPanel();
 		selectColorButton = new JButton();
 		selectColorButton.setBackground(new Color(255,255,255));
 		selectColorButton.setPreferredSize(new Dimension(60,60));
 		groupSelectColor.add(selectColorButton);
 		
+		//색상 15개
 		JPanel groupColors = new JPanel();
 		groupColors.setLayout(new GridLayout(3,5));
 		colorButtons = new JButton[15];
 		Color[] colors = new Color[15];
-		for(int i=0; i<colors.length; i++) {
-			colors[i] = new Color(0,0,0);
-		}
-		colors[0] = new Color(255,255,255);
-		colors[1] = new Color(0,0,0);
-		colors[2] = new Color(255,0,0);
-		colors[3] = new Color(0,255,0);
-		colors[4] = new Color(0,0,255);
+
+		colors[0] = new Color(0, 0, 0);       // 검정
+		colors[1] = new Color(128, 128, 128); // 회색
+		colors[2] = new Color(192, 192, 192); // 밝은 회색
+		colors[3] = new Color(255, 255, 255); // 흰색
+		colors[4] = new Color(255, 0, 0);     // 빨강
+		colors[5] = new Color(255, 165, 0);   // 주황
+		colors[6] = new Color(255, 255, 0);   // 노랑
+		colors[7] = new Color(0, 128, 0);     // 초록
+		colors[8] = new Color(0, 255, 255);   // 청록
+		colors[9] = new Color(0, 0, 255);     // 파랑
+		colors[10] = new Color(128, 0, 128);  // 보라
+		colors[11] = new Color(238, 130, 238); // 연보라
+		colors[12] = new Color(255, 192, 203); // 분홍
+		colors[13] = new Color(255, 105, 180); // 핫핑크
+		colors[14] = new Color(139, 69, 19);  // 갈색
+		
 		for(int i=0; i<colorButtons.length; i++) {
 			colorButtons[i] = new JButton();
 			colorButtons[i].setBackground(colors[i]);
@@ -118,28 +185,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		toolBar.add(groupDrawBox);
 		toolBar.add(groupSelectColor);
 		toolBar.add(groupColors);
-		
-		ImageIcon iconDot = new ImageIcon("res/dot.png");
-		ImageIcon iconLine = new ImageIcon("res/line.png");
-		ImageIcon iconCircle = new ImageIcon("res/circle.png");
-		ImageIcon iconSquare = new ImageIcon("res/square.png");
-		
-		//툴바 점
-		JButton dotButton = new JButton(iconDot);
-		toolBar.add(dotButton);
-		
-		//툴바 선
-		JButton lineButton = new JButton(iconLine);
-		toolBar.add(lineButton);
-		
-		//툴바 원
-		JButton circleButton = new JButton(iconCircle);
-		toolBar.add(circleButton);
-		
-		//툴바 네모
-		JButton rectButton = new JButton(iconSquare);
-		toolBar.add(rectButton);
-		
 		
 		return toolBar;
 	}
@@ -270,17 +315,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		if(command.equals(MENU_FILE_NEW)) {
 			
 		}
-		else if(command.equals(MENU_FILE_CLOSE)) {
-			this.dispose();
-			System.exit(0);
-		}
-		else if(command.equals(MENU_FILE_SAVE)) {
-			FileDialog fd = new FileDialog(this, "파일저장", FileDialog.SAVE);
-			fd.setVisible(true);
-			if(fd.getFile() != null) {
-				screen.save(fd.getDirectory()+fd.getFile());
-			}
-		}
 		else if(command.equals(MENU_FILE_OPEN)) {
 			FileDialog fd = new FileDialog(this, "파일열기", FileDialog.LOAD);
 			fd.setVisible(true);
@@ -289,8 +323,23 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		}
 		}
+		else if(command.equals(MENU_FILE_SAVE)) {
+			FileDialog fd = new FileDialog(this, "파일저장", FileDialog.SAVE);
+			fd.setVisible(true);
+			if(fd.getFile() != null) {
+				screen.save(fd.getDirectory()+fd.getFile());
+			}
+		}
+		
+		else if(command.equals(MENU_FILE_CLOSE)) {
+			this.dispose();
+			System.exit(0);
+		}
+
+		
 		else {
 			for(int i=0; i<colorButtons.length; i++) {
+				//이거로 누른 색을 배경으로 바꿈
 				if(colorButtons[i].equals(e.getSource())) {
 					selectColorButton.setBackground(
 							colorButtons[i].getBackground());
@@ -299,5 +348,5 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 		}
 	}
+	}
 
-}
