@@ -25,6 +25,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.BevelBorder;
@@ -46,6 +47,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JButton[] colorButtons;
 	private JButton selectColorButton;
 	private JButton [] buttons;
+	private JSlider thicknessSlider;
 	
 	ImageIcon iconDot = new ImageIcon("res/dot.png");
 	ImageIcon iconLine = new ImageIcon("res/line.png");
@@ -74,30 +76,35 @@ public class MainFrame extends JFrame implements ActionListener {
 		setVisible(true);
 		// 가운데로 설정하는 방법
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		for (int i = 0; i < buttons.length; i++) {
-		    final int mode = i; // 현재 버튼에 대한 모드 저장
-		    buttons[i].addActionListener(e -> {
-		        switch (mode) {
-		            case 0: // 점 버튼
-		                screen.setDrawMode(Screen.POINT);
-		                break;
-		            case 1: // 선 버튼
-		                screen.setDrawMode(Screen.LINE);
-		                break;
-		            case 2: // 원 버튼
-		                screen.setDrawMode(Screen.CIRCLE);
-		                break;
-		            case 3: // 네모 버튼
-		                screen.setDrawMode(Screen.RECTANGLE);
-		                break;
-		        }
-		    });
-		}
+		buttonSelect();
+		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		
 		
 	}
+	private void buttonSelect() {
+        for (int i = 0; i < buttons.length; i++) {
+            final int mode = i; // 현재 버튼에 대한 모드 저장
+            buttons[i].addActionListener(e -> {
+                switch (mode) {
+                    case 0: // 점 버튼
+                        screen.setDrawMode(Screen.POINT);
+                        break;
+                    case 1: // 선 버튼
+                        screen.setDrawMode(Screen.LINE);
+                        break;
+                    case 2: // 원 버튼
+                        screen.setDrawMode(Screen.CIRCLE);
+                        break;
+                    case 3: // 네모 버튼
+                        screen.setDrawMode(Screen.RECTANGLE);
+                        break;
+                }
+            });
+        }
+    }
 	
 	//상단에 툴바
 	private JToolBar createToolBar() {
@@ -105,6 +112,16 @@ public class MainFrame extends JFrame implements ActionListener {
 		toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
 		JPanel groupDrawBox = new JPanel();
 		groupDrawBox.setLayout(new GridLayout(3,4));
+		
+		thicknessSlider = new JSlider(1, 10, 3); // 최소 1, 최대 10, 초기값 3
+        thicknessSlider.setMajorTickSpacing(1);
+        thicknessSlider.setPaintTicks(true);
+        thicknessSlider.setPaintLabels(true);
+        
+        thicknessSlider.addChangeListener(e -> {
+            int thickness = thicknessSlider.getValue();
+            screen.setLineThickness(thickness); // Screen에 굵기 전달
+        });
 		
 		ImageIcon[] icons = {
 			    new ImageIcon("res/dot.png"),
@@ -183,15 +200,20 @@ public class MainFrame extends JFrame implements ActionListener {
 			colorButtons[i].setPreferredSize(new Dimension(20,20));
 			int index = i;
             colorButtons[i].addActionListener(e -> {
-                screen.setCurrentColor(colors[index]); // 선택한 색을 Screen에 전달
+                screen.setCurrentColor(colors[index]);
                 selectColorButton.setBackground(colors[index]);
             });
 			groupColors.add(colorButtons[i]);
 		}
 		
+		
+		
 		toolBar.add(groupDrawBox);
 		toolBar.add(groupSelectColor);
 		toolBar.add(groupColors);
+		toolBar.add(new JLabel("선 굵기:"));
+        toolBar.add(thicknessSlider);
+		
 		
 		return toolBar;
 	}

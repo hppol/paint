@@ -5,11 +5,13 @@ public class Line {
 	private Point start;
 	private Point end;
 	private Color color;
+	private int thickness;
 	
-	public Line(Point start, Point end, Color color) {
+	public Line(Point start, Point end, Color color, int thickness) {
         this.start = start;
         this.end = end;
         this.color = color;
+        this.thickness = thickness;
     }
 	
 	public Point getStart() {
@@ -28,5 +30,9 @@ public class Line {
 	public Color getColor() {
         return color;
     }
+	
+	 public int getThickness() {
+	        return thickness;
+	    }
 	
 }
