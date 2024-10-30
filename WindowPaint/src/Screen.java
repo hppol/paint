@@ -18,13 +18,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Screen extends Canvas implements ComponentListener, MouseListener, MouseMotionListener {
     private Graphics bufferGraphics;
 	private Image offscreen;
     private Dimension dim;
     private LinkedList<Point> pointList = new LinkedList<Point>();
+    private List<Dot> dotList = new ArrayList<>();
     private LinkedList<Line> lineList = new LinkedList<Line>();
     private LinkedList<Circle> circleList = new LinkedList<Circle>();
     private LinkedList<Rectangle> rectangleList = new LinkedList<Rectangle>();
@@ -37,7 +40,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     private Point startPoint = new Point();
     private Point endPoint = new Point();
     private Point oldPoint = new Point();
-    
+    private Color currentColor = Color.BLACK;
     
     public Screen() {
 		// TODO Auto-generated constructor stub
@@ -45,7 +48,13 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     	addMouseListener(this);
     	addMouseMotionListener(this);
     	setDrawMode(POINT);
+    	this.currentColor = Color.BLACK; // 기본 색상
 	}
+    
+    //색 선택
+    public void setCurrentColor(Color color) {
+        this.currentColor = color;
+    }
     
     //열기
     public void open(String filename) {
@@ -108,20 +117,33 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		// TODO Auto-generated method stub
 		bufferGraphics.clearRect(0, 0, dim.width, dim.height);
 		
+		bufferGraphics.setColor(currentColor);
+		
 		//모든 점 그리기
-		for(Point p: pointList) {
-			bufferGraphics.fillOval(p.x, p.y, 10, 10);
-		}
+//		for(Point p: pointList) {
+//			bufferGraphics.setColor(currentColor);
+//			bufferGraphics.fillOval(p.x, p.y, 10, 10);
+//		}
+		for (Dot dot : dotList) {
+	        bufferGraphics.setColor(dot.getColor()); // 각 점의 색상으로 설정
+	        Point p = dot.getPosition();
+	        bufferGraphics.fillOval(p.x, p.y, 10, 10); // 점 그리기
+	    }
 		//모든 라인 그리기
 		for(Line l: lineList) {
+			bufferGraphics.setColor(l.getColor());
 			bufferGraphics.drawLine(l.getStart().x, l.getStart().y, l.getEnd().x, l.getEnd().y);
 		}
+		//모든 원 그리기
 		for (Circle c : circleList) {
-	        bufferGraphics.drawOval(c.center.x - c.diameter / 2, c.center.y - c.diameter / 2, c.diameter, c.diameter);
+			bufferGraphics.setColor(c.getColor());
+	        Point topLeft = c.getTopLeft();
+	        bufferGraphics.drawOval(topLeft.x, topLeft.y, c.getWidth(), c.getHeight());
 	    }
 
 	    // 모든 네모 그리기
 	    for (Rectangle r : rectangleList) {
+	    	bufferGraphics.setColor(r.getColor());
 	        bufferGraphics.drawRect(r.topLeft.x, r.topLeft.y, r.width, r.height);
 	    }
 
@@ -168,23 +190,47 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
+		startPoint.setLocation(e.getX(),e.getY());
 		if(drawMode == LINE) {
-			startPoint.setLocation(e.getX(),e.getY());
 			oldPoint = startPoint;
 			
 		}
+		else if (drawMode == CIRCLE) {
+	    } 
+		else if (drawMode == RECTANGLE) {
+	    }
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
+		endPoint.setLocation(e.getX(),e.getY());
 		if(drawMode == LINE) {
-			endPoint.setLocation(e.getX(),e.getY());
-			Line line = new Line();
-			line.setStart(new Point(startPoint));
-			line.setEnd(new Point(endPoint));
+			Line line = new Line(new Point(startPoint), new Point(endPoint), currentColor);
 			lineList.add(line);
+			repaint();
 		}
+		else if (drawMode == CIRCLE) {
+			
+	        // 원 그리기
+			int width = Math.abs(endPoint.x - startPoint.x);
+		    int height = Math.abs(endPoint.y - startPoint.y);
+		    int x = Math.min(startPoint.x, endPoint.x);
+		    int y = Math.min(startPoint.y, endPoint.y);
+		    Circle ellipse = new Circle(new Point(x, y), width, height, currentColor); // 수정된 Circle 객체 생성
+		    circleList.add(ellipse); // 리스트에 추가
+	        repaint();
+	    } 
+		
+		else if (drawMode == RECTANGLE) {
+	        // 네모 그리기
+	        int width = Math.abs(endPoint.x - startPoint.x);
+	        int height = Math.abs(endPoint.y - startPoint.y);
+	        Point topLeft = new Point(Math.min(startPoint.x, endPoint.x), Math.min(startPoint.y, endPoint.y)); // 왼쪽 위 좌표 계산
+	        Rectangle rect = new Rectangle(topLeft, width, height, currentColor);
+	        rectangleList.add(rect);
+	        repaint();
+	    }
 		
 	}
 
@@ -204,38 +250,44 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
 		Graphics g = getGraphics();
+		g.setXORMode(Color.white);
 
 	    if (drawMode == POINT) {
-	        Point p = new Point(e.getX(), e.getY());
-	        pointList.add(p);
+//	        Point p = new Point(e.getX(), e.getY());
+//	        pointList.add(p);
+//	        repaint();
+	    	Dot dot = new Dot(new Point(e.getX(), e.getY()), currentColor);
+	        dotList.add(dot);
 	        repaint();
 	    } 
 	    else if(drawMode == LINE) {
-			this.endPoint = e.getPoint();
+			endPoint = e.getPoint();
 			g.setXORMode(Color.white);
 			g.drawLine(startPoint.x, startPoint.y, oldPoint.x, oldPoint.y);
 			g.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
 			this.oldPoint = endPoint;
-			g.setColor(Color.black);	
 			
 		}
 	    else if (drawMode == CIRCLE) {
-	        int diameter = 50; // 원하는 지름
-	        Circle circle = new Circle(new Point(e.getX(), e.getY()), diameter);
-	        circleList.add(circle);
-	        repaint();
+	        // 원 그리기 미리보기
+	        endPoint = e.getPoint();
+	        int width = Math.abs(oldPoint.x - startPoint.x); // 가로 길이
+	        int height = Math.abs(oldPoint.y - startPoint.y); // 세로 길이
+	        int x = Math.min(startPoint.x, oldPoint.x);
+	        int y = Math.min(startPoint.y, oldPoint.y);
+	        bufferGraphics.drawOval(x, y, width, height); // 이전 타원 지우기	
 	    } 
+	    
 	    else if (drawMode == RECTANGLE) {
-	        int width = 50; // 원하는 너비
-	        int height = 50; // 원하는 높이
-	        Rectangle rect = new Rectangle(new Point(e.getX() - width / 2, e.getY() - height / 2), width, height);
-	        rectangleList.add(rect);
-	        repaint();
+	        // 네모 그리기 미리보기
+	        endPoint = e.getPoint();
+	        int width = Math.abs(endPoint.x - startPoint.x);
+	        int height = Math.abs(endPoint.y - startPoint.y);
+	        int x = Math.min(startPoint.x, endPoint.x);
+	        int y = Math.min(startPoint.y, endPoint.y);
 	    }
+	    g.setPaintMode();
 
-
-
-		
 	}
 
 	@Override

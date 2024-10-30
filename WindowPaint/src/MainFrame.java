@@ -119,27 +119,24 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		buttons = new JButton[12];
 		// 버튼 생성 및 아이콘 설정
-		// createToolBar 메서드 안에서
 		 for (int i = 0; i < 4; i++) {
 		        buttons[i] = new JButton(icons[i]);
 		        buttons[i].setPreferredSize(new Dimension(20, 20));
 				buttons[i].addActionListener(this);
 		        
-		        // 버튼에 ActionListener 추가
+		        //현재 눌린 버튼의 테두리 두께 설정 
 		        buttons[i].addActionListener(e -> {
-		            // 모든 버튼 테두리를 기본색으로 리셋
 		            for (JButton button : buttons) {
-		                button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1)); // 기본 테두리
+		                button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 		            }
-		            // 현재 눌린 버튼의 테두리를 두껍게 설정
-		            ((JButton)e.getSource()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 3)); // 두꺼운 검정색 테두리
+		            ((JButton)e.getSource()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
 		        });
 		        groupDrawBox.add(buttons[i]);
 		    }
 		
-		
+		//빈버튼 만들기
 		for (int i = 4; i < buttons.length; i++) {
-		    buttons[i] = new JButton(); // 빈 버튼 생성
+		    buttons[i] = new JButton();
 		    buttons[i].setPreferredSize(new Dimension(20, 20));
 		    groupDrawBox.add(buttons[i]);
 		}
@@ -148,37 +145,47 @@ public class MainFrame extends JFrame implements ActionListener {
 		//선택한 색상 보이게 하는 패널
 		JPanel groupSelectColor = new JPanel();
 		selectColorButton = new JButton();
-		selectColorButton.setBackground(new Color(255,255,255));
-		selectColorButton.setPreferredSize(new Dimension(60,60));
+		selectColorButton.setBackground(new Color(0,0,0));
+		selectColorButton.setPreferredSize(new Dimension(30,30));
 		groupSelectColor.add(selectColorButton);
 		
 		//색상 15개
 		JPanel groupColors = new JPanel();
-		groupColors.setLayout(new GridLayout(3,5));
-		colorButtons = new JButton[15];
-		Color[] colors = new Color[15];
+		groupColors.setLayout(new GridLayout(2,10));
+		colorButtons = new JButton[20];
+		Color[] colors = new Color[20];
 
-		colors[0] = new Color(0, 0, 0);       // 검정
+		colors[0] = new Color(0, 0, 0);       // 검정색
 		colors[1] = new Color(128, 128, 128); // 회색
-		colors[2] = new Color(192, 192, 192); // 밝은 회색
-		colors[3] = new Color(255, 255, 255); // 흰색
-		colors[4] = new Color(255, 0, 0);     // 빨강
-		colors[5] = new Color(255, 165, 0);   // 주황
-		colors[6] = new Color(255, 255, 0);   // 노랑
-		colors[7] = new Color(0, 128, 0);     // 초록
-		colors[8] = new Color(0, 255, 255);   // 청록
-		colors[9] = new Color(0, 0, 255);     // 파랑
-		colors[10] = new Color(128, 0, 128);  // 보라
-		colors[11] = new Color(238, 130, 238); // 연보라
-		colors[12] = new Color(255, 192, 203); // 분홍
-		colors[13] = new Color(255, 105, 180); // 핫핑크
-		colors[14] = new Color(139, 69, 19);  // 갈색
+		colors[2] = new Color(155, 17, 30); // 진한 빨강색
+		colors[3] = new Color(255, 0, 0); // 빨강색
+		colors[4] = new Color(255, 165, 0);     // 주황색
+		colors[5] = new Color(255, 255, 0);   // 노랑색
+		colors[6] = new Color(0, 128, 0);   // 초록색
+		colors[7] = new Color(131, 220, 183);     // 옥색
+		colors[8] = new Color(0, 0, 128);   // 남색
+		colors[9] = new Color(108, 1, 64);     // 자주색
+		colors[10] = new Color(255, 255, 255);  // 흰색
+		colors[11] = new Color(211, 211, 211); // 연한 회색
+		colors[12] = new Color(125, 79, 69); // 밤색
+		colors[13] = new Color(127, 5, 42); // 다홍색
+		colors[14] = new Color(255, 215, 0);  // 황금색
+		colors[15] = new Color(229, 211, 77); // 연한 노랑
+		colors[16] = new Color(191, 255, 0); // 라임 색
+		colors[17] = new Color(207, 255, 229); // 연한 옥색
+		colors[18] = new Color(57, 95, 114); // 청회색
+		colors[19] = new Color(169, 123, 245); // 연한 보라색
 		
+		//선택된 색상을 표시
 		for(int i=0; i<colorButtons.length; i++) {
 			colorButtons[i] = new JButton();
 			colorButtons[i].setBackground(colors[i]);
 			colorButtons[i].setPreferredSize(new Dimension(20,20));
-			colorButtons[i].addActionListener(this);
+			int index = i;
+            colorButtons[i].addActionListener(e -> {
+                screen.setCurrentColor(colors[index]); // 선택한 색을 Screen에 전달
+                selectColorButton.setBackground(colors[index]);
+            });
 			groupColors.add(colorButtons[i]);
 		}
 		

@@ -1,8 +1,17 @@
+import java.awt.Color;
 import java.awt.Point;
 
 public class Line {
 	private Point start;
 	private Point end;
+	private Color color;
+	
+	public Line(Point start, Point end, Color color) {
+        this.start = start;
+        this.end = end;
+        this.color = color;
+    }
+	
 	public Point getStart() {
 		return start;
 	}
@@ -15,5 +24,9 @@ public class Line {
 	public void setEnd(Point end) {
 		this.end = end;
 	}
+	
+	public Color getColor() {
+        return color;
+    }
 	
 }
