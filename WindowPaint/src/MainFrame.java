@@ -49,10 +49,6 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JButton [] buttons;
 	private JSlider thicknessSlider;
 	
-	ImageIcon iconDot = new ImageIcon("res/dot.png");
-	ImageIcon iconLine = new ImageIcon("res/line.png");
-	ImageIcon iconCircle = new ImageIcon("res/circle.png");
-	ImageIcon iconSquare = new ImageIcon("res/square.png");
 	
 	public MainFrame() {
 		// TODO Auto-generated constructor stub
@@ -101,6 +97,18 @@ public class MainFrame extends JFrame implements ActionListener {
                     case 3: // 네모 버튼
                         screen.setDrawMode(Screen.RECTANGLE);
                         break;
+                    case 4: // 세모 버튼
+                    	screen.setDrawMode(Screen.TRIANGLE);
+                    	break;
+                    case 5: // 마름모 버튼
+                    	screen.setDrawMode(Screen.DIAMOND);
+                    	break;
+                    case 6: // 오각형 버튼
+                    	screen.setDrawMode(Screen.PENTAGON);
+                    	break;
+                    case 7: // 육각형 버튼
+                    	screen.setDrawMode(Screen.HEXAGON);
+                    	break;
                 }
             });
         }
@@ -127,7 +135,11 @@ public class MainFrame extends JFrame implements ActionListener {
 			    new ImageIcon("res/dot.png"),
 			    new ImageIcon("res/line.png"),
 			    new ImageIcon("res/circle.png"),
-			    new ImageIcon("res/square.png")
+			    new ImageIcon("res/square.png"),
+			    new ImageIcon("res/triangle.png"),
+			    new ImageIcon("res/diamond.png"),
+			    new ImageIcon("res/pentagon.png"),
+			    new ImageIcon("res/hexagon.png")
 		};
 		
 		for (int i = 0; i < icons.length; i++) {
@@ -136,7 +148,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		buttons = new JButton[12];
 		// 버튼 생성 및 아이콘 설정
-		 for (int i = 0; i < 4; i++) {
+		 for (int i = 0; i < 8; i++) {
 		        buttons[i] = new JButton(icons[i]);
 		        buttons[i].setPreferredSize(new Dimension(20, 20));
 				buttons[i].addActionListener(this);
@@ -145,7 +157,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		    }
 		
 		//빈버튼 만들기
-		for (int i = 4; i < buttons.length; i++) {
+		for (int i = 8; i < buttons.length; i++) {
 		    buttons[i] = new JButton();
 		    buttons[i].setPreferredSize(new Dimension(20, 20));
 		    groupDrawBox.add(buttons[i]);

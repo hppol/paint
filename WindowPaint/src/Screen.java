@@ -33,12 +33,22 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     private LinkedList<Line> lineList = new LinkedList<Line>();
     private LinkedList<Circle> circleList = new LinkedList<Circle>();
     private LinkedList<Rectangle> rectangleList = new LinkedList<Rectangle>();
+    private LinkedList<Triangle> triangleList = new LinkedList<>();
+    private LinkedList<Diamond> diamondList = new LinkedList<>();
+    private LinkedList<Pentagon> pentagonList = new LinkedList<>();
+    private LinkedList<Hexagon> hexagonList = new LinkedList<>();
+    
     private int drawMode;
     public static final int SELECT = 0;
     public static final int POINT = 1;
     public static final int LINE = 2;
     public static final int CIRCLE = 3;
     public static final int RECTANGLE = 4;
+    public static final int TRIANGLE = 5;
+    public static final int DIAMOND = 6;
+    public static final int PENTAGON = 7;
+    public static final int HEXAGON = 8;
+    
     private Point startPoint = new Point();
     private Point endPoint = new Point();
     private Point oldPoint = new Point();
@@ -158,6 +168,33 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	    	Point topLeft = r.getTopLeft();
 	    	bufferGraphics.drawRect(r.getTopLeft().x, r.getTopLeft().y, r.getWidth(), r.getHeight());
 	    }
+	    // 세모 그리기
+	    for (Triangle t : triangleList) {
+	        g2.setColor(t.getColor());
+	        g2.setStroke(new BasicStroke(t.getThickness()));
+	        g2.drawPolygon(t.getShape());
+	    }
+	    
+	    // 마름모 그리기
+	    for (Diamond d : diamondList) {
+	        g2.setColor(d.getColor());
+	        g2.setStroke(new BasicStroke(d.getThickness()));
+	        g2.drawPolygon(d.getShape());
+	    }
+	    
+	    // 오각형 그리기
+	    for (Pentagon p : pentagonList) {
+	        g2.setColor(p.getColor());
+	        g2.setStroke(new BasicStroke(p.getThickness()));
+	        g2.drawPolygon(p.getShape());
+	    }
+	    
+	    // 육각형 그리기
+	    for (Hexagon h : hexagonList) {
+	        g2.setColor(h.getColor());
+	        g2.setStroke(new BasicStroke(h.getThickness()));
+	        g2.drawPolygon(h.getShape());
+	    }
 
 	    g.drawImage(offscreen, 0, 0, this);
 	}
@@ -220,7 +257,6 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		if(drawMode == LINE) {
 			Line line = new Line(new Point(startPoint), new Point(endPoint), currentColor, lineThickness);
 			lineList.add(line);
-			repaint();
 		}
 		else if (drawMode == CIRCLE) {
 			
@@ -231,7 +267,6 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		    int y = Math.min(startPoint.y, endPoint.y);
 		    Circle ellipse = new Circle(new Point(x, y), width, height, currentColor, lineThickness);
 		    circleList.add(ellipse);
-	        repaint();
 	    } 
 		
 		else if (drawMode == RECTANGLE) {
@@ -241,9 +276,73 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	        Point topLeft = new Point(Math.min(startPoint.x, endPoint.x), Math.min(startPoint.y, endPoint.y));
 	        Rectangle rect = new Rectangle(topLeft, width, height, currentColor, lineThickness);
 	        rectangleList.add(rect);
-	        repaint();
+	    }
+		else if (drawMode == TRIANGLE) {
+			int centerX = (startPoint.x + endPoint.x) / 2;
+	        int baseY = Math.max(startPoint.y, endPoint.y);
+	        int tipY = Math.min(startPoint.y, endPoint.y);
+
+	        // 좌표 설정
+	        Point p1 = new Point(startPoint.x, baseY); // 왼쪽 밑
+	        Point p2 = new Point(endPoint.x, baseY);   // 오른쪽 밑
+	        Point p3 = new Point(centerX, tipY);       // 위쪽 꼭짓점
+
+	        triangleList.add(new Triangle(p1, p2, p3, currentColor, lineThickness));
 	    }
 		
+		else if (drawMode == DIAMOND) {
+	        Point top = new Point((startPoint.x + endPoint.x) / 2, startPoint.y);
+	        Point right = new Point(endPoint.x, (startPoint.y + endPoint.y) / 2);
+	        Point bottom = new Point((startPoint.x + endPoint.x) / 2, endPoint.y);
+	        Point left = new Point(startPoint.x, (startPoint.y + endPoint.y) / 2);
+	        diamondList.add(new Diamond(top, right, bottom, left, currentColor, lineThickness));
+	    }
+		else if (drawMode == PENTAGON) {
+	        // 오각형 생성 로직
+	        Point[] pentagonPoints = calculatePentagonPoints(startPoint, endPoint);
+	        pentagonList.add(new Pentagon(pentagonPoints, currentColor, lineThickness));
+	    }
+		else if (drawMode == HEXAGON) {
+	        // 육각형 생성 로직
+	        Point[] hexagonPoints = calculateHexagonPoints(startPoint, endPoint);
+	        hexagonList.add(new Hexagon(hexagonPoints, currentColor, lineThickness));
+	    }
+		repaint();
+		
+	}
+
+	private Point[] calculateHexagonPoints(Point start, Point end) {
+		// TODO Auto-generated method stub
+	    int centerX = (start.x + end.x) / 2;
+	    int centerY = (start.y + end.y) / 2;
+	    int radius = Math.min(Math.abs(end.x - start.x), Math.abs(end.y - start.y)) / 2;
+	    Point[] points = new Point[6];
+
+	    for (int i = 0; i < 6; i++) {
+	        double angle = Math.toRadians(60 * i - 90); // 각도 계산
+	        points[i] = new Point(
+	            centerX + (int) (radius * Math.cos(angle)),
+	            centerY + (int) (radius * Math.sin(angle))
+	        );
+	    }
+	    return points;
+	}
+
+	private Point[] calculatePentagonPoints(Point start, Point end) {
+		// TODO Auto-generated method stub
+		int centerX = (start.x + end.x) / 2;
+	    int centerY = (start.y + end.y) / 2;
+	    int radius = Math.min(Math.abs(end.x - start.x), Math.abs(end.y - start.y)) / 2;
+	    Point[] points = new Point[5];
+
+	    for (int i = 0; i < 5; i++) {
+	        double angle = Math.toRadians(72 * i - 90); // 각도 계산
+	        points[i] = new Point(
+	            centerX + (int) (radius * Math.cos(angle)),
+	            centerY + (int) (radius * Math.sin(angle))
+	        );
+	    }
+	    return points;
 	}
 
 	@Override
