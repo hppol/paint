@@ -140,14 +140,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		        buttons[i] = new JButton(icons[i]);
 		        buttons[i].setPreferredSize(new Dimension(20, 20));
 				buttons[i].addActionListener(this);
-		        
-		        //현재 눌린 버튼의 테두리 두께 설정 
-		        buttons[i].addActionListener(e -> {
-		            for (JButton button : buttons) {
-		                button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-		            }
-		            ((JButton)e.getSource()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
-		        });
+
 		        groupDrawBox.add(buttons[i]);
 		    }
 		
@@ -172,37 +165,60 @@ public class MainFrame extends JFrame implements ActionListener {
 		colorButtons = new JButton[20];
 		Color[] colors = new Color[20];
 
-		colors[0] = new Color(0, 0, 0);       // 검정색
+		colors[0] = new Color(0, 0, 0); // 검정색
 		colors[1] = new Color(128, 128, 128); // 회색
 		colors[2] = new Color(155, 17, 30); // 진한 빨강색
 		colors[3] = new Color(255, 0, 0); // 빨강색
-		colors[4] = new Color(255, 165, 0);     // 주황색
-		colors[5] = new Color(255, 255, 0);   // 노랑색
-		colors[6] = new Color(0, 128, 0);   // 초록색
-		colors[7] = new Color(131, 220, 183);     // 옥색
-		colors[8] = new Color(0, 0, 128);   // 남색
-		colors[9] = new Color(108, 1, 64);     // 자주색
-		colors[10] = new Color(255, 255, 255);  // 흰색
+		colors[4] = new Color(255, 165, 0); // 주황색
+		colors[5] = new Color(255, 255, 0); // 노랑색
+		colors[6] = new Color(0, 128, 0); // 초록색
+		colors[7] = new Color(131, 220, 183); // 옥색
+		colors[8] = new Color(0, 0, 128); // 남색
+		colors[9] = new Color(108, 1, 64); // 자주색
+		colors[10] = new Color(255, 255, 255); // 흰색
 		colors[11] = new Color(211, 211, 211); // 연한 회색
 		colors[12] = new Color(125, 79, 69); // 밤색
-		colors[13] = new Color(127, 5, 42); // 다홍색
-		colors[14] = new Color(255, 215, 0);  // 황금색
+		colors[13] = new Color(255, 169, 181); // 다홍색
+		colors[14] = new Color(255, 215, 0); // 황금색
 		colors[15] = new Color(229, 211, 77); // 연한 노랑
 		colors[16] = new Color(191, 255, 0); // 라임 색
 		colors[17] = new Color(207, 255, 229); // 연한 옥색
 		colors[18] = new Color(57, 95, 114); // 청회색
 		colors[19] = new Color(169, 123, 245); // 연한 보라색
 		
+		String[] colorNames = {
+			    "검정", "회색", "진한 빨강", "빨강", "주황",
+			    "노랑", "녹색", "옥색", "남색", "자주",
+			    "흰색", "연한 회색", "밤색", "다홍", "황금색",
+			    "연한 노랑", "라임", "연한 옥색", "청회색", "연한 보라"
+			};
+		
+		
+		
 		//선택된 색상을 표시
 		for(int i=0; i<colorButtons.length; i++) {
 			colorButtons[i] = new JButton();
 			colorButtons[i].setBackground(colors[i]);
 			colorButtons[i].setPreferredSize(new Dimension(20,20));
+			colorButtons[i].setToolTipText(colorNames[i]);
 			int index = i;
             colorButtons[i].addActionListener(e -> {
                 screen.setCurrentColor(colors[index]);
                 selectColorButton.setBackground(colors[index]);
+                
+                for (int j = 0; j < colorButtons.length; j++) {
+                    if (j == index) {
+                        colorButtons[j].setBorder(BorderFactory.createLineBorder(Color.WHITE, 4));
+                    } else {
+                        colorButtons[j].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+                    }
+                }
+                
             });
+            
+            
+            
+            
 			groupColors.add(colorButtons[i]);
 		}
 		
