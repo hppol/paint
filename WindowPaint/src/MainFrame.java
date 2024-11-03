@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -12,10 +11,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.image.ImagingOpException;
-
 import javax.swing.BorderFactory;
-import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -24,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
@@ -32,22 +29,28 @@ import javax.swing.border.BevelBorder;
 
 public class MainFrame extends JFrame implements ActionListener {
 	
-	private final String MENU_FILE_NEW = "새로만들기(N)";
-	private final String MENU_FILE_CLOSE = "끝내기(E)";
+	private final String MENU_FILE_NEW = "새로 만들기(N)";
 	private final String MENU_FILE_OPEN = "열기(O)";
 	private final String MENU_FILE_SAVE = "저장(S)";
 	private final String MENU_FILE_SAVEAS = "다른 이름으로 저장(A)";
+	private final String MENU_FILE_CLOSE = "끝내기(E)";
+	
 	private final String MENU_TOOL_DOT = "점";
     private final String MENU_TOOL_LINE = "선";
     private final String MENU_TOOL_CIRCLE = "원";
     private final String MENU_TOOL_SQUARE = "네모";
+    private final String MENU_TOOL_TRIANGLE = "세모";
+    private final String MENU_TOOL_DIAMOND = "마름모";
+    private final String MENU_TOOL_PENTAGON = "오각형";
+    private final String MENU_TOOL_HEXAGON = "육각형";
 	
 	private JLabel statusBar = null;
 	private Screen screen;
 	private JButton[] colorButtons;
 	private JButton selectColorButton;
-	private JButton [] buttons;
+	private JButton [] toolButtons;
 	private JSlider thicknessSlider;
+	
 	
 	
 	public MainFrame() {
@@ -67,7 +70,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		screen = new Screen();
         add(screen, BorderLayout.CENTER);
 		
-		setSize(800,600);
+		setSize(1000,800);
 		setTitle("그림판");
 		setVisible(true);
 		// 가운데로 설정하는 방법
@@ -75,15 +78,27 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		buttonSelect();
 		
+		
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		
 		
 	}
+	
+	private void saveAsWithFormat(String format) {
+	    FileDialog fd = new FileDialog(this, format.toUpperCase() + "로 저장", FileDialog.SAVE);
+	    fd.setVisible(true);
+	    if (fd.getFile() != null) {
+	        String filePath = fd.getDirectory() + fd.getFile();
+	        screen.saveAs(filePath, format);
+	    }
+	}
+	
 	private void buttonSelect() {
-        for (int i = 0; i < buttons.length; i++) {
-            final int mode = i; // 현재 버튼에 대한 모드 저장
-            buttons[i].addActionListener(e -> {
+        for (int i = 0; i < toolButtons.length; i++) {
+            final int mode = i;
+            toolButtons[i].addActionListener(e -> {
                 switch (mode) {
                     case 0: // 점 버튼
                         screen.setDrawMode(Screen.POINT);
@@ -121,14 +136,15 @@ public class MainFrame extends JFrame implements ActionListener {
 		JPanel groupDrawBox = new JPanel();
 		groupDrawBox.setLayout(new GridLayout(3,4));
 		
-		thicknessSlider = new JSlider(1, 10, 3); // 최소 1, 최대 10, 초기값 3
-        thicknessSlider.setMajorTickSpacing(1);
-        thicknessSlider.setPaintTicks(true);
-        thicknessSlider.setPaintLabels(true);
+		//굵기
+		thicknessSlider = new JSlider(1, 10, 3); // 최소 1, 최대 15, 초기값 3
+        thicknessSlider.setMajorTickSpacing(1); //눈금 간격
+        thicknessSlider.setPaintTicks(false); //눈금 표시
+        thicknessSlider.setPaintLabels(true); //눈금 숫자 표시
         
         thicknessSlider.addChangeListener(e -> {
             int thickness = thicknessSlider.getValue();
-            screen.setLineThickness(thickness); // Screen에 굵기 전달
+            screen.setLineThickness(thickness);
         });
 		
 		ImageIcon[] icons = {
@@ -146,21 +162,21 @@ public class MainFrame extends JFrame implements ActionListener {
 		    icons[i] = new ImageIcon(icons[i].getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
 		}
 		
-		buttons = new JButton[12];
-		// 버튼 생성 및 아이콘 설정
+		toolButtons = new JButton[12];
+		// 툴버튼
 		 for (int i = 0; i < 8; i++) {
-		        buttons[i] = new JButton(icons[i]);
-		        buttons[i].setPreferredSize(new Dimension(20, 20));
-				buttons[i].addActionListener(this);
+			 toolButtons[i] = new JButton(icons[i]);
+			 toolButtons[i].setPreferredSize(new Dimension(20, 20));
+			 toolButtons[i].addActionListener(this);
 
-		        groupDrawBox.add(buttons[i]);
+		        groupDrawBox.add(toolButtons[i]);
 		    }
 		
 		//빈버튼 만들기
-		for (int i = 8; i < buttons.length; i++) {
-		    buttons[i] = new JButton();
-		    buttons[i].setPreferredSize(new Dimension(20, 20));
-		    groupDrawBox.add(buttons[i]);
+		for (int i = 8; i < toolButtons.length; i++) {
+			toolButtons[i] = new JButton();
+			toolButtons[i].setPreferredSize(new Dimension(20, 20));
+		    groupDrawBox.add(toolButtons[i]);
 		}
 		
 		
@@ -171,7 +187,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		selectColorButton.setPreferredSize(new Dimension(30,30));
 		groupSelectColor.add(selectColorButton);
 		
-		//색상 15개
+		//색상 20개
 		JPanel groupColors = new JPanel();
 		groupColors.setLayout(new GridLayout(2,10));
 		colorButtons = new JButton[20];
@@ -276,12 +292,40 @@ public class MainFrame extends JFrame implements ActionListener {
 		fileMenu.add(newMenuItem);
 		newMenuItem.addActionListener(this);
 		
-		//shift+n 누르면 사용 가능
-		newMenuItem.setMnemonic(KeyEvent.VK_N);
-		//ctrl+n 누르면 사용 가능
-		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-		//툴팁(열기 메뉴를 누르면 설명서 같은거 뜨는 거)
-		newMenuItem.setToolTipText("파일을 새로 만듭니다.");
+
+		newMenuItem.setMnemonic(KeyEvent.VK_N); //shift+n 누르면 사용 가능
+		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK)); //ctrl+n 누르면 사용 가능
+		newMenuItem.setToolTipText("파일을 새로 만듭니다."); //툴팁(열기 메뉴를 누르면 설명서 같은거 뜨는 거)
+		
+		//새로 만들기 누를 때 저장 여부창
+		newMenuItem.addActionListener(e -> {
+		    // 저장 여부를 묻는 확인 창 띄우기
+		    int option = JOptionPane.showOptionDialog(
+		        this,
+		        "작업을 저장하시겠습니까?",
+		        "새로 만들기",
+		        JOptionPane.YES_NO_CANCEL_OPTION,
+		        JOptionPane.QUESTION_MESSAGE,
+		        null,
+		        new Object[]{"저장", "저장하지 않음", "취소"},
+		        "저장"
+		    );
+
+		    if (option == JOptionPane.YES_OPTION) {
+		        // 파일 저장
+		        FileDialog fd = new FileDialog(this, "파일 저장", FileDialog.SAVE);
+		        fd.setVisible(true);
+		        if (fd.getFile() != null) {
+		            String savePath = fd.getDirectory() + fd.getFile();
+		            screen.save(savePath);
+		        }
+		        screen.clear();
+		    } else if (option == JOptionPane.NO_OPTION) {
+		        // 저장하지 않고 새로 만들기
+		        screen.clear();
+		    }
+		});
+		
 		
 		//JMenuItem 열기(파일 하위메뉴)
 		JMenuItem openMenuItem = new JMenuItem(MENU_FILE_OPEN, iconOpen);
@@ -292,33 +336,57 @@ public class MainFrame extends JFrame implements ActionListener {
 		openMenuItem.setToolTipText("파일을 엽니다.");
 		openMenuItem.addActionListener(this);
 		
+		
 		//JMenuItem 저장(파일 하위메뉴)
 		JMenuItem saveMenuItem = new JMenuItem(MENU_FILE_SAVE, iconSave);
 		fileMenu.add(saveMenuItem);
 
-		
-		
 		saveMenuItem.setMnemonic(KeyEvent.VK_S);
 		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 		saveMenuItem.setToolTipText("파일을 저장합니다.");
 		saveMenuItem.addActionListener(this);
 		
-		//JmenuItem 다른이름으로 저장(파일 하위메뉴)
-		JMenuItem saveasMenuItem = new JMenuItem(MENU_FILE_SAVEAS, iconSaveAs);
-		fileMenu.add(saveasMenuItem);
 		
-		saveasMenuItem.setMnemonic(KeyEvent.VK_A);
-		saveasMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
-		saveasMenuItem.setToolTipText("다른 이름으로 저장합니다.");
+		//Jmenu 다른이름으로 저장(파일 하위메뉴)
+		JMenu saveAsMenu = new JMenu(MENU_FILE_SAVEAS);
+		saveAsMenu.setIcon(new ImageIcon("res/saveas.png"));
+		fileMenu.add(saveAsMenu);
+
+		// 다른이름으로 저장 하위 메뉴들
+		JMenuItem saveAsPng = new JMenuItem("PNG로 저장");
+		saveAsPng.addActionListener(e -> saveAsWithFormat("png"));
+		saveAsMenu.add(saveAsPng);
+
+		JMenuItem saveAsJpeg = new JMenuItem("JPEG로 저장");
+		saveAsJpeg.addActionListener(e -> saveAsWithFormat("jpg"));
+		saveAsMenu.add(saveAsJpeg);
+
+		JMenuItem saveAsBmp = new JMenuItem("BMP로 저장");
+		saveAsBmp.addActionListener(e -> saveAsWithFormat("bmp"));
+		saveAsMenu.add(saveAsBmp);
+
+		JMenuItem saveAsGif = new JMenuItem("GIF로 저장");
+		saveAsGif.addActionListener(e -> saveAsWithFormat("gif"));
+		saveAsMenu.add(saveAsGif);
+		
+		
+		saveAsMenu.setMnemonic(KeyEvent.VK_A);
+//		saveAsMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK)); menu에서는 사용못함 item에서만 사용가능
+		saveAsMenu.setToolTipText("다른 이름으로 저장합니다.");
+		saveAsMenu.addActionListener(this);
+		
+		
 		
 		//JMenuItem 끝내기(파일 하위메뉴)
 		JMenuItem closeMenuItem = new JMenuItem(MENU_FILE_CLOSE, iconClose);
 		fileMenu.add(closeMenuItem);
-		closeMenuItem.addActionListener(this);
-		closeMenuItem.setToolTipText("프로그램을 종료 합니다.");
+		
 		
 		closeMenuItem.setMnemonic(KeyEvent.VK_E);
 		closeMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
+		closeMenuItem.setToolTipText("프로그램을 종료 합니다.");
+		closeMenuItem.addActionListener(this);
+		
 
 		//JMenu 보기
 		JMenu viewMenu = new JMenu("보기(V)");
@@ -348,18 +416,44 @@ public class MainFrame extends JFrame implements ActionListener {
 		//JMenuItem 점(도구 하위메뉴)
 		JMenuItem dotMenuItem = new JMenuItem(MENU_TOOL_DOT);
 		toolMenu.add(dotMenuItem);
+		dotMenuItem.addActionListener(e -> toolButtons[0].doClick());
 		
 		//JMenuItem 선(도구 하위메뉴)
 		JMenuItem lineMenuItem = new JMenuItem(MENU_TOOL_LINE);
 		toolMenu.add(lineMenuItem);
+		lineMenuItem.addActionListener(e -> toolButtons[1].doClick());
 		
 		//JMenuItem 원(도구 하위메뉴)
 		JMenuItem circleMenuItem = new JMenuItem(MENU_TOOL_CIRCLE);
 		toolMenu.add(circleMenuItem);
+		circleMenuItem.addActionListener(e -> toolButtons[2].doClick());
 		
 		//JMenuItem 네모(도구 하위메뉴)
 		JMenuItem rectMenuItem = new JMenuItem(MENU_TOOL_SQUARE);
 		toolMenu.add(rectMenuItem);
+		rectMenuItem.addActionListener(e -> toolButtons[3].doClick());
+		
+		//JMenuItem 세모(도구 하위메뉴)
+		JMenuItem triMenuItem = new JMenuItem(MENU_TOOL_TRIANGLE);
+		toolMenu.add(triMenuItem);
+		triMenuItem.addActionListener(e -> toolButtons[4].doClick());
+		
+		//JMenuItem 마름모(도구 하위메뉴)
+		JMenuItem diaMenuItem = new JMenuItem(MENU_TOOL_DIAMOND);
+		toolMenu.add(diaMenuItem);
+		diaMenuItem.addActionListener(e -> toolButtons[5].doClick());
+		
+		//JMenuItem 오각형(도구 하위메뉴)
+		JMenuItem pentMenuItem = new JMenuItem(MENU_TOOL_PENTAGON);
+		toolMenu.add(pentMenuItem);
+		pentMenuItem.addActionListener(e -> toolButtons[6].doClick());
+		
+		//JMenuItem 육각형(도구 하위메뉴)
+		JMenuItem hexMenuItem = new JMenuItem(MENU_TOOL_HEXAGON);
+		toolMenu.add(hexMenuItem);
+		hexMenuItem.addActionListener(e -> toolButtons[7].doClick());
+		
+				
 		
 		return menuBar;
 	}
@@ -370,6 +464,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		// TODO Auto-generated method stub
 		String command = e.getActionCommand();
 		if(command.equals(MENU_FILE_NEW)) {
+			
 			
 		}
 		else if(command.equals(MENU_FILE_OPEN)) {
@@ -386,6 +481,9 @@ public class MainFrame extends JFrame implements ActionListener {
 			if(fd.getFile() != null) {
 				screen.save(fd.getDirectory()+fd.getFile());
 			}
+		}
+		else if(command.equals(MENU_FILE_SAVEAS)) {
+			
 		}
 		
 		else if(command.equals(MENU_FILE_CLOSE)) {
