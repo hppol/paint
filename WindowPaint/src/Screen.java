@@ -2,6 +2,7 @@ import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -21,13 +22,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class Screen extends Canvas implements ComponentListener, MouseListener, MouseMotionListener {
     private Graphics bufferGraphics;
 	private Image offscreen;
     private Dimension dim;
+    
     private LinkedList<Point> pointList = new LinkedList<Point>();
     private List<Dot> dotList = new ArrayList<>();
     private LinkedList<Line> lineList = new LinkedList<Line>();
@@ -37,8 +41,9 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     private LinkedList<Diamond> diamondList = new LinkedList<>();
     private LinkedList<Pentagon> pentagonList = new LinkedList<>();
     private LinkedList<Hexagon> hexagonList = new LinkedList<>();
-    
-    private int drawMode;
+    private List<TextShape> textList = new ArrayList<>();
+    private Stack<List<Object>> undoStack = new Stack<>();
+    private Stack<List<Object>> redoStack = new Stack<>();
     
     public static final int SELECT = 0;
     public static final int POINT = 1;
@@ -49,12 +54,15 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     public static final int DIAMOND = 6;
     public static final int PENTAGON = 7;
     public static final int HEXAGON = 8;
+    public static final int TEXT = 9;
     
     private Point startPoint = new Point();
     private Point endPoint = new Point();
     private Point oldPoint = new Point();
     private Color currentColor = Color.BLACK;
+    private int drawMode;
     private int lineThickness = 3;
+    private Font textFont = new Font("Arial", Font.PLAIN, 16);
     
     public Screen() {
 		// TODO Auto-generated constructor stub
@@ -63,7 +71,72 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     	addMouseMotionListener(this);
     	setDrawMode(POINT);
     	this.currentColor = Color.BLACK; // 기본 색상
+    	saveState();
 	}
+    
+    
+    private void saveState() {
+    	List<Object> currentState = new ArrayList<>();
+        currentState.add(new LinkedList<>(dotList));      // dotList 복사
+        currentState.add(new LinkedList<>(lineList));     // lineList 복사
+        currentState.add(new LinkedList<>(circleList));   // circleList 복사
+        currentState.add(new LinkedList<>(rectangleList));// rectangleList 복사
+        currentState.add(new LinkedList<>(triangleList)); // triangleList 복사
+        currentState.add(new LinkedList<>(diamondList));  // diamondList 복사
+        currentState.add(new LinkedList<>(pentagonList)); // pentagonList 복사
+        currentState.add(new LinkedList<>(hexagonList));  // hexagonList 복사
+        currentState.add(new LinkedList<>(textList));     // textList 복사
+
+        undoStack.push(currentState);
+        redoStack.clear(); // 새로운 작업이 있을 때 redoStack 초기화
+    }
+    
+    public void undo() {
+        if (!undoStack.isEmpty()) {
+            redoStack.push(takeSnapshot()); // 현재 상태를 redoStack에 저장
+            restoreState(undoStack.pop()); // 이전 상태를 복원
+            repaint(); // 화면 다시 그리기
+        }
+    }
+
+    public void redo() {
+        if (!redoStack.isEmpty()) {
+            undoStack.push(takeSnapshot()); // 현재 상태를 undoStack에 저장
+            restoreState(redoStack.pop()); // 복원할 상태를 undoStack에서 가져와 복원
+            repaint(); // 화면 다시 그리기
+        }
+    }
+    
+    private List<Object> takeSnapshot() {
+    	List<Object> snapshot = new ArrayList<>();
+        snapshot.add(new LinkedList<>(dotList));       // dotList 복사
+        snapshot.add(new LinkedList<>(lineList));      // lineList 복사
+        snapshot.add(new LinkedList<>(circleList));    // circleList 복사
+        snapshot.add(new LinkedList<>(rectangleList)); // rectangleList 복사
+        snapshot.add(new LinkedList<>(triangleList));  // triangleList 복사
+        snapshot.add(new LinkedList<>(diamondList));   // diamondList 복사
+        snapshot.add(new LinkedList<>(pentagonList));  // pentagonList 복사
+        snapshot.add(new LinkedList<>(hexagonList));   // hexagonList 복사
+        snapshot.add(new LinkedList<>(textList));      // textList 복사
+        return snapshot;
+    }
+
+    @SuppressWarnings("unchecked")
+	private void restoreState(List<Object> state) {
+    	dotList = (LinkedList<Dot>) state.get(0);
+        lineList = (LinkedList<Line>) state.get(1);
+        circleList = (LinkedList<Circle>) state.get(2);
+        rectangleList = (LinkedList<Rectangle>) state.get(3);
+        triangleList = (LinkedList<Triangle>) state.get(4);
+        diamondList = (LinkedList<Diamond>) state.get(5);
+        pentagonList = (LinkedList<Pentagon>) state.get(6);
+        hexagonList = (LinkedList<Hexagon>) state.get(7);
+        textList = (LinkedList<TextShape>) state.get(8);
+        repaint();
+    }
+
+
+
     
     //굵기 선택
     public void setLineThickness(int thickness) {
@@ -198,7 +271,10 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	        g2.setStroke(new BasicStroke(h.getThickness()));
 	        g2.drawPolygon(h.getShape());
 	    }
-
+	    
+	    for (TextShape text : textList) {
+            text.draw(bufferGraphics);
+        }
 	    g.drawImage(offscreen, 0, 0, this);
 	}
 
@@ -251,6 +327,15 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	    } 
 		else if (drawMode == RECTANGLE) {
 	    }
+		
+		else if (drawMode == TEXT) {
+	            String text = JOptionPane.showInputDialog("원하는 텍스트를 입력하시오:");
+	            if (text != null && !text.isEmpty()) {
+	                TextShape textShape = new TextShape(text, e.getPoint(), currentColor, textFont);
+	                textList.add(textShape); // 텍스트 리스트에 추가
+	                repaint(); // 화면에 텍스트 그리기
+	            }
+	        }
 	}
 
 	@Override
@@ -258,12 +343,14 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		// TODO Auto-generated method stub
 		endPoint.setLocation(e.getX(),e.getY());
 		if(drawMode == LINE) {
+			saveState();
 			Line line = new Line(new Point(startPoint), new Point(endPoint), currentColor, lineThickness);
 			lineList.add(line);
 		}
 		else if (drawMode == CIRCLE) {
 			
 	        // 원 그리기
+			saveState();
 			int width = Math.abs(endPoint.x - startPoint.x);
 		    int height = Math.abs(endPoint.y - startPoint.y);
 		    int x = Math.min(startPoint.x, endPoint.x);
@@ -274,6 +361,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		
 		else if (drawMode == RECTANGLE) {
 	        // 네모 그리기
+			saveState();
 	        int width = Math.abs(endPoint.x - startPoint.x);
 	        int height = Math.abs(endPoint.y - startPoint.y);
 	        Point topLeft = new Point(Math.min(startPoint.x, endPoint.x), Math.min(startPoint.y, endPoint.y));
@@ -281,6 +369,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	        rectangleList.add(rect);
 	    }
 		else if (drawMode == TRIANGLE) {
+			saveState();
 			int centerX = (startPoint.x + endPoint.x) / 2;
 	        int baseY = Math.max(startPoint.y, endPoint.y);
 	        int tipY = Math.min(startPoint.y, endPoint.y);
@@ -294,6 +383,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	    }
 		
 		else if (drawMode == DIAMOND) {
+			saveState();
 	        Point top = new Point((startPoint.x + endPoint.x) / 2, startPoint.y);
 	        Point right = new Point(endPoint.x, (startPoint.y + endPoint.y) / 2);
 	        Point bottom = new Point((startPoint.x + endPoint.x) / 2, endPoint.y);
@@ -301,13 +391,16 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	        diamondList.add(new Diamond(top, right, bottom, left, currentColor, lineThickness));
 	    }
 		else if (drawMode == PENTAGON) {
+			saveState();
 	        Point[] pentagonPoints = calculatePentagonPoints(startPoint, endPoint);
 	        pentagonList.add(new Pentagon(pentagonPoints, currentColor, lineThickness));
 	    }
 		else if (drawMode == HEXAGON) {
+			saveState();
 	        Point[] hexagonPoints = calculateHexagonPoints(startPoint, endPoint);
 	        hexagonList.add(new Hexagon(hexagonPoints, currentColor, lineThickness));
 	    }
+		
 		repaint();
 		
 	}
@@ -423,6 +516,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	    pentagonList.clear();
 	    diamondList.clear();
 	    hexagonList.clear();
+	    textList.clear();
 	    repaint();
 	}
 	
@@ -441,23 +535,6 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	    }
 	}
 	
-	private void drawGrid(Graphics g) {
-	    g.setColor(Color.LIGHT_GRAY); // 격자 색상 설정
-	    int gridSize = 20; // 격자 간격 설정
 
-	    // 수직선 그리기
-	    for (int x = 0; x < getWidth(); x += gridSize) {
-	        g.drawLine(x, 0, x, getHeight());
-	    }
-
-	    // 수평선 그리기
-	    for (int y = 0; y < getHeight(); y += gridSize) {
-	        g.drawLine(0, y, getWidth(), y);
-	    }
-	}
-
-
-
-    
 
 }

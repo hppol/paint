@@ -250,6 +250,19 @@ public class MainFrame extends JFrame implements ActionListener {
 			groupColors.add(colorButtons[i]);
 		}
 		
+		JButton textButton = new JButton("텍스트");
+	    textButton.addActionListener(e -> screen.setDrawMode(Screen.TEXT)); // TEXT 모드 활성화
+	    
+	    
+	    JButton undoButton = new JButton("Undo");
+	    undoButton.addActionListener(e -> screen.undo());
+	    toolBar.add(undoButton);
+
+	    JButton redoButton = new JButton("Redo");
+	    redoButton.addActionListener(e -> screen.redo());
+	    toolBar.add(redoButton);
+
+	    
 		
 		
 		toolBar.add(groupDrawBox);
@@ -257,6 +270,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		toolBar.add(groupColors);
 		toolBar.add(new JLabel("선 굵기:"));
         toolBar.add(thicknessSlider);
+        toolBar.add(textButton);
 		
 		
 		return toolBar;
