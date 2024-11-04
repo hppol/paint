@@ -15,25 +15,47 @@ public class Rectangle {
         this.color = color;
         this.thickness = thickness;
     }
-    
-    public Color getColor() {
-        return color;
-    }
-    
-    public Point getTopLeft() {
-        return topLeft;
-    }
 
-    public int getWidth() {
-        return width;
-    }
+	public Point getTopLeft() {
+		return topLeft;
+	}
 
-    public int getHeight() {
-        return height;
-    }
+	public void setTopLeft(Point topLeft) {
+		this.topLeft = topLeft;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public int getThickness() {
+		return thickness;
+	}
+
+	public void setThickness(int thickness) {
+		this.thickness = thickness;
+	}
     
-    public int getThickness() {
-        return thickness;
-    }
+    
 
 }

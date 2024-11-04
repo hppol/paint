@@ -15,15 +15,29 @@ public class Diamond {
         this.shape = new Polygon(xPoints, yPoints, 4);
     }
 
-    public Polygon getShape() {
-        return shape;
-    }
+	public Polygon getShape() {
+		return shape;
+	}
 
-    public Color getColor() {
-        return color;
-    }
+	public void setShape(Polygon shape) {
+		this.shape = shape;
+	}
 
-    public int getThickness() {
-        return thickness;
-    }
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public int getThickness() {
+		return thickness;
+	}
+
+	public void setThickness(int thickness) {
+		this.thickness = thickness;
+	}
+    
+    
 }

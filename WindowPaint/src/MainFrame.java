@@ -62,7 +62,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		//메뉴바
 		setJMenuBar(createMenuBar());
 		
-		//준비 
+		//준비(하단에)
 		statusBar = createStatusBar();
 		add(statusBar, BorderLayout.SOUTH);
 		
@@ -97,34 +97,41 @@ public class MainFrame extends JFrame implements ActionListener {
 	        screen.saveAs(filePath, format);
 	    }
 	}
-	
+	//뭐로 그릴지 선택하는 버튼
 	private void buttonSelect() {
         for (int i = 0; i < toolButtons.length; i++) {
             final int mode = i;
             toolButtons[i].addActionListener(e -> {
                 switch (mode) {
-                    case 0: // 점 버튼
+                    case 0:
                         screen.setDrawMode(Screen.POINT);
                         break;
-                    case 1: // 선 버튼
+                        
+                    case 1:
                         screen.setDrawMode(Screen.LINE);
                         break;
-                    case 2: // 원 버튼
+                        
+                    case 2:
                         screen.setDrawMode(Screen.CIRCLE);
                         break;
-                    case 3: // 네모 버튼
+                        
+                    case 3:
                         screen.setDrawMode(Screen.RECTANGLE);
                         break;
-                    case 4: // 세모 버튼
+                        
+                    case 4:
                     	screen.setDrawMode(Screen.TRIANGLE);
                     	break;
-                    case 5: // 마름모 버튼
+                    	
+                    case 5:
                     	screen.setDrawMode(Screen.DIAMOND);
                     	break;
-                    case 6: // 오각형 버튼
+                    	
+                    case 6:
                     	screen.setDrawMode(Screen.PENTAGON);
                     	break;
-                    case 7: // 육각형 버튼
+                    	
+                    case 7:
                     	screen.setDrawMode(Screen.HEXAGON);
                     	break;
                 }
@@ -150,6 +157,7 @@ public class MainFrame extends JFrame implements ActionListener {
             screen.setLineThickness(thickness);
         });
 		
+        //도구들의 아이콘
 		ImageIcon[] icons = {
 			    new ImageIcon("res/dot.png"),
 			    new ImageIcon("res/line.png"),
@@ -183,7 +191,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 		
 		toolButtons[0].setToolTipText("점");
-		toolButtons[1].setToolTipText("라인");
+		toolButtons[1].setToolTipText("선");
 		toolButtons[2].setToolTipText("원");
 		toolButtons[3].setToolTipText("네모");
 		toolButtons[4].setToolTipText("세모");
@@ -228,10 +236,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		colors[19] = new Color(169, 123, 245); // 연한 보라색
 		
 		String[] colorNames = {
-			    "검정", "회색", "진한 빨강", "빨강", "주황",
-			    "노랑", "녹색", "옥색", "남색", "자주",
-			    "흰색", "연한 회색", "밤색", "다홍", "황금색",
-			    "연한 노랑", "라임", "연한 옥색", "청회색", "연한 보라"
+			    "검정", "회색", "진한 빨강",
+			    "빨강", "주황", "노랑",
+			    "녹색", "옥색", "남색",
+			    "자주", "흰색", "연한 회색",
+			    "밤색", "다홍", "황금색",
+			    "연한 노랑", "라임", "연한 옥색",
+			    "청회색", "연한 보라"
 			};
 		
 		
@@ -242,6 +253,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			colorButtons[i].setBackground(colors[i]);
 			colorButtons[i].setPreferredSize(new Dimension(20,20));
 			colorButtons[i].setToolTipText(colorNames[i]);
+			
 			int index = i;
             colorButtons[i].addActionListener(e -> {
                 screen.setCurrentColor(colors[index]);
@@ -263,8 +275,9 @@ public class MainFrame extends JFrame implements ActionListener {
 			groupColors.add(colorButtons[i]);
 		}
 		
-		ImageIcon textIcon = new ImageIcon("res/text.png");
 		//텍스트
+		ImageIcon textIcon = new ImageIcon("res/text.png");
+
 		JButton textButton = new JButton(textIcon);
 		textButton.setToolTipText("텍스트");
 	    textButton.addActionListener(e -> screen.setDrawMode(Screen.TEXT));
@@ -280,6 +293,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	    
 	    undoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Z"), "undoAction");
 	    undoButton.getActionMap().put("undoAction", new AbstractAction() {
+	    	
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	            screen.undo();
@@ -294,18 +308,28 @@ public class MainFrame extends JFrame implements ActionListener {
 	    
 	    redoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Y"), "redoAction");
 	    redoButton.getActionMap().put("redoAction", new AbstractAction() {
+	    	
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	            screen.redo();
 	        }
 	    });
 	    
+	    ImageIcon eraserIcon = new ImageIcon("res/eraser.png");
+	    JButton eraserButton = new JButton(eraserIcon);
+	    eraserButton.setToolTipText("지우개");
+	    eraserButton.addActionListener(e -> screen.setDrawMode(Screen.ERASER));
+
+	    
 
         toolBar.add(textButton);
-		
+	    toolBar.add(eraserButton);
+        
 		toolBar.add(groupDrawBox);
+		
 		toolBar.add(groupSelectColor);
 		toolBar.add(groupColors);
+		
 		toolBar.add(new JLabel("선 굵기:"));
         toolBar.add(thicknessSlider);
 
@@ -317,8 +341,10 @@ public class MainFrame extends JFrame implements ActionListener {
 	//하단에 준비 레이블
 	private JLabel createStatusBar() {
 		JLabel statusBar = new JLabel("준비");
+		
 		//테두리 설정 방법
 		statusBar.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		
 		return statusBar;
 	}
 	
@@ -326,12 +352,12 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JMenuBar createMenuBar() {
 		
 		ImageIcon iconNew = new ImageIcon("res/new.png");
-		ImageIcon iconClose = new ImageIcon("res/close.png");
 		ImageIcon iconOpen = new ImageIcon("res/open.png");
 		ImageIcon iconSave = new ImageIcon("res/save.png");
 		ImageIcon iconSaveAs = new ImageIcon("res/saveas.png");
+		ImageIcon iconClose = new ImageIcon("res/close.png");
 		
-		//JMenuBar 선언
+		//JMenuBar
 		JMenuBar menuBar = new JMenuBar();
 		
 		//JMenu 파일
@@ -344,7 +370,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		fileMenu.add(newMenuItem);
 		newMenuItem.addActionListener(this);
 		
-
+		
 		newMenuItem.setMnemonic(KeyEvent.VK_N); //shift+n 누르면 사용 가능
 		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK)); //ctrl+n 누르면 사용 가능
 		newMenuItem.setToolTipText("파일을 새로 만듭니다."); //툴팁(열기 메뉴를 누르면 설명서 같은거 뜨는 거)
@@ -432,8 +458,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		
 		
-		
-		
 		//JMenuItem 끝내기(파일 하위메뉴)
 		JMenuItem closeMenuItem = new JMenuItem(MENU_FILE_CLOSE, iconClose);
 		fileMenu.add(closeMenuItem);
@@ -445,6 +469,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		closeMenuItem.addActionListener(this);
 		
 
+		
 		//JMenu 보기
 		JMenu viewMenu = new JMenu("보기(V)");
 		menuBar.add(viewMenu);
@@ -456,6 +481,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		//상태바 체크 여부로 statusBar 보이기 사라지기
 		showMenuItem.addItemListener(new ItemListener() {
+			
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == ItemEvent.SELECTED) {
 					statusBar.setVisible(true);
@@ -551,7 +577,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		else {
 			for(int i=0; i<colorButtons.length; i++) {
-				//이거로 누른 색을 배경으로 바꿈
+				//이거로 선택된 색을 옆에 있는 색으로 변경
 				if(colorButtons[i].equals(e.getSource())) {
 					selectColorButton.setBackground(
 							colorButtons[i].getBackground());
