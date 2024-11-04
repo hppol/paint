@@ -56,6 +56,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     public static final int HEXAGON = 8;
     public static final int TEXT = 9;
     
+    
     private Point startPoint = new Point();
     private Point endPoint = new Point();
     private Point oldPoint = new Point();

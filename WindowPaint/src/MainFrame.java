@@ -11,10 +11,13 @@ import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -179,6 +182,16 @@ public class MainFrame extends JFrame implements ActionListener {
 		    groupDrawBox.add(toolButtons[i]);
 		}
 		
+		toolButtons[0].setToolTipText("점");
+		toolButtons[1].setToolTipText("라인");
+		toolButtons[2].setToolTipText("원");
+		toolButtons[3].setToolTipText("네모");
+		toolButtons[4].setToolTipText("세모");
+		toolButtons[5].setToolTipText("마름모");
+		toolButtons[6].setToolTipText("오각형");
+		toolButtons[7].setToolTipText("육각형");
+		
+		
 		
 		//선택한 색상 보이게 하는 패널
 		JPanel groupSelectColor = new JPanel();
@@ -250,27 +263,52 @@ public class MainFrame extends JFrame implements ActionListener {
 			groupColors.add(colorButtons[i]);
 		}
 		
-		JButton textButton = new JButton("텍스트");
-	    textButton.addActionListener(e -> screen.setDrawMode(Screen.TEXT)); // TEXT 모드 활성화
+		ImageIcon textIcon = new ImageIcon("res/text.png");
+		//텍스트
+		JButton textButton = new JButton(textIcon);
+		textButton.setToolTipText("텍스트");
+	    textButton.addActionListener(e -> screen.setDrawMode(Screen.TEXT));
 	    
+	    //실행취소, 다시실행
+	    ImageIcon undoIcon = new ImageIcon("res/undo.png");
+	    ImageIcon redoIcon = new ImageIcon("res/redo.png");
 	    
-	    JButton undoButton = new JButton("Undo");
+	    JButton undoButton = new JButton(undoIcon);
+	    undoButton.setToolTipText("실행취소");
 	    undoButton.addActionListener(e -> screen.undo());
 	    toolBar.add(undoButton);
+	    
+	    undoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Z"), "undoAction");
+	    undoButton.getActionMap().put("undoAction", new AbstractAction() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            screen.undo();
+	        }
+	    });
 
-	    JButton redoButton = new JButton("Redo");
+
+	    JButton redoButton = new JButton(redoIcon);
+	    redoButton.setToolTipText("다시실행");
 	    redoButton.addActionListener(e -> screen.redo());
 	    toolBar.add(redoButton);
-
 	    
-		
+	    redoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Y"), "redoAction");
+	    redoButton.getActionMap().put("redoAction", new AbstractAction() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            screen.redo();
+	        }
+	    });
+	    
+
+        toolBar.add(textButton);
 		
 		toolBar.add(groupDrawBox);
 		toolBar.add(groupSelectColor);
 		toolBar.add(groupColors);
 		toolBar.add(new JLabel("선 굵기:"));
         toolBar.add(thicknessSlider);
-        toolBar.add(textButton);
+
 		
 		
 		return toolBar;
@@ -365,29 +403,34 @@ public class MainFrame extends JFrame implements ActionListener {
 		JMenu saveAsMenu = new JMenu(MENU_FILE_SAVEAS);
 		saveAsMenu.setIcon(new ImageIcon("res/saveas.png"));
 		fileMenu.add(saveAsMenu);
-
-		// 다른이름으로 저장 하위 메뉴들
-		JMenuItem saveAsPng = new JMenuItem("PNG로 저장");
-		saveAsPng.addActionListener(e -> saveAsWithFormat("png"));
-		saveAsMenu.add(saveAsPng);
-
-		JMenuItem saveAsJpeg = new JMenuItem("JPEG로 저장");
-		saveAsJpeg.addActionListener(e -> saveAsWithFormat("jpg"));
-		saveAsMenu.add(saveAsJpeg);
-
-		JMenuItem saveAsBmp = new JMenuItem("BMP로 저장");
-		saveAsBmp.addActionListener(e -> saveAsWithFormat("bmp"));
-		saveAsMenu.add(saveAsBmp);
-
-		JMenuItem saveAsGif = new JMenuItem("GIF로 저장");
-		saveAsGif.addActionListener(e -> saveAsWithFormat("gif"));
-		saveAsMenu.add(saveAsGif);
-		
 		
 		saveAsMenu.setMnemonic(KeyEvent.VK_A);
 //		saveAsMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK)); menu에서는 사용못함 item에서만 사용가능
 		saveAsMenu.setToolTipText("다른 이름으로 저장합니다.");
 		saveAsMenu.addActionListener(this);
+
+		// 다른이름으로 저장 하위 메뉴들
+		JMenuItem saveAsPng = new JMenuItem("PNG로 저장");
+		saveAsPng.addActionListener(e -> saveAsWithFormat("png"));
+		saveAsPng.setToolTipText("PNG로 저장합니다.");
+		saveAsMenu.add(saveAsPng);
+
+		JMenuItem saveAsJpeg = new JMenuItem("JPEG로 저장");
+		saveAsJpeg.addActionListener(e -> saveAsWithFormat("jpg"));
+		saveAsJpeg.setToolTipText("JPEG로 저장합니다.");
+		saveAsMenu.add(saveAsJpeg);
+
+		JMenuItem saveAsBmp = new JMenuItem("BMP로 저장");
+		saveAsBmp.addActionListener(e -> saveAsWithFormat("bmp"));
+		saveAsBmp.setToolTipText("BMP로 저장합니다.");
+		saveAsMenu.add(saveAsBmp);
+
+		JMenuItem saveAsGif = new JMenuItem("GIF로 저장");
+		saveAsGif.addActionListener(e -> saveAsWithFormat("gif"));
+		saveAsGif.setToolTipText("GIF로 저장합니다.");
+		saveAsMenu.add(saveAsGif);
+		
+		
 		
 		
 		
