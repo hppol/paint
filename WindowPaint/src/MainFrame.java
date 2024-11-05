@@ -192,7 +192,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		};
 		
 		for (int i = 0; i < icons.length; i++) {
-		    icons[i] = new ImageIcon(icons[i].getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
+		    icons[i] = new ImageIcon(icons[i]
+		    		.getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH));
 		}
 		
 		toolButtons = new JButton[12];
@@ -258,13 +259,26 @@ public class MainFrame extends JFrame implements ActionListener {
 		colors[19] = new Color(169, 123, 245); // 연한 보라색
 		
 		String[] colorNames = {
-			    "검정", "회색", "진한 빨강",
-			    "빨강", "주황", "노랑",
-			    "녹색", "옥색", "남색",
-			    "자주", "흰색", "연한 회색",
-			    "밤색", "다홍", "황금색",
-			    "연한 노랑", "라임", "연한 옥색",
-			    "청회색", "연한 보라"
+			    "검정",
+			    "회색",
+			    "진한 빨강",
+			    "빨강",
+			    "주황",
+			    "노랑",
+			    "녹색",
+			    "옥색",
+			    "남색",
+			    "자주",
+			    "흰색",
+			    "연한 회색",
+			    "밤색",
+			    "다홍",
+			    "황금색",
+			    "연한 노랑",
+			    "라임",
+			    "연한 옥색",
+			    "청회색",
+			    "연한 보라"
 			};
 		
 		
@@ -283,9 +297,11 @@ public class MainFrame extends JFrame implements ActionListener {
                 
                 for (int j = 0; j < colorButtons.length; j++) {
                     if (j == index) {
-                        colorButtons[j].setBorder(BorderFactory.createLineBorder(Color.WHITE, 4));
+                        colorButtons[j].setBorder(BorderFactory
+                        		.createLineBorder(Color.WHITE, 4));
                     } else {
-                        colorButtons[j].setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+                        colorButtons[j].setBorder(BorderFactory
+                        		.createLineBorder(Color.LIGHT_GRAY, 1));
                     }
                 }
                 
@@ -313,7 +329,9 @@ public class MainFrame extends JFrame implements ActionListener {
 	    undoButton.addActionListener(e -> screen.undo());
 	    toolBar.add(undoButton);
 	    
-	    undoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Z"), "undoAction");
+	    undoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+	    .put(KeyStroke.getKeyStroke("control Z"), "undoAction");
+	    
 	    undoButton.getActionMap().put("undoAction", new AbstractAction() {
 	    	
 	        @Override
@@ -328,7 +346,9 @@ public class MainFrame extends JFrame implements ActionListener {
 	    redoButton.addActionListener(e -> screen.redo());
 	    toolBar.add(redoButton);
 	    
-	    redoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control Y"), "redoAction");
+	    redoButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+	    .put(KeyStroke.getKeyStroke("control Y"), "redoAction");
+	    
 	    redoButton.getActionMap().put("redoAction", new AbstractAction() {
 	    	
 	        @Override
@@ -392,10 +412,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		fileMenu.add(newMenuItem);
 		newMenuItem.addActionListener(this);
 		
-		
-		newMenuItem.setMnemonic(KeyEvent.VK_N); //shift+n 누르면 사용 가능
-		newMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK)); //ctrl+n 누르면 사용 가능
-		newMenuItem.setToolTipText("파일을 새로 만듭니다."); //툴팁(열기 메뉴를 누르면 설명서 같은거 뜨는 거)
+		//shift+n 누르면 사용 가능
+		newMenuItem.setMnemonic(KeyEvent.VK_N);
+		//ctrl+n 누르면 사용 가능
+		newMenuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+		//툴팁(열기 메뉴를 누르면 설명서 같은거 뜨는 거)
+		newMenuItem.setToolTipText("파일을 새로 만듭니다.");
 		
 		//새로 만들기 누를 때 저장 여부창
 		newMenuItem.addActionListener(e -> {
@@ -432,7 +455,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		fileMenu.add(openMenuItem);
 		
 		openMenuItem.setMnemonic(KeyEvent.VK_O);
-		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+		openMenuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
 		openMenuItem.setToolTipText("파일을 엽니다.");
 		openMenuItem.addActionListener(this);
 		
@@ -442,7 +466,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		fileMenu.add(saveMenuItem);
 
 		saveMenuItem.setMnemonic(KeyEvent.VK_S);
-		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+		saveMenuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 		saveMenuItem.setToolTipText("파일을 저장합니다.");
 		saveMenuItem.addActionListener(this);
 		
@@ -453,26 +478,30 @@ public class MainFrame extends JFrame implements ActionListener {
 		fileMenu.add(saveAsMenu);
 		
 		saveAsMenu.setMnemonic(KeyEvent.VK_A);
-//		saveAsMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK)); menu에서는 사용못함 item에서만 사용가능
+//		saveAsMenu.setAccelerator(KeyStroke
+//		.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK)); menu에서는 사용못함 item에서만 사용가능
 		saveAsMenu.setToolTipText("다른 이름으로 저장합니다.");
 		saveAsMenu.addActionListener(this);
 
-		// 다른이름으로 저장 하위 메뉴들
+		// 다른이름으로 저장 하위 메뉴들(PNG)
 		JMenuItem saveAsPng = new JMenuItem("PNG로 저장");
 		saveAsPng.addActionListener(e -> saveAsWithFormat("png"));
 		saveAsPng.setToolTipText("PNG로 저장합니다.");
 		saveAsMenu.add(saveAsPng);
 
+		// 다른이름으로 저장 하위 메뉴들(JPEG)
 		JMenuItem saveAsJpeg = new JMenuItem("JPEG로 저장");
 		saveAsJpeg.addActionListener(e -> saveAsWithFormat("jpg"));
 		saveAsJpeg.setToolTipText("JPEG로 저장합니다.");
 		saveAsMenu.add(saveAsJpeg);
-
+		
+		// 다른이름으로 저장 하위 메뉴들(BMP)
 		JMenuItem saveAsBmp = new JMenuItem("BMP로 저장");
 		saveAsBmp.addActionListener(e -> saveAsWithFormat("bmp"));
 		saveAsBmp.setToolTipText("BMP로 저장합니다.");
 		saveAsMenu.add(saveAsBmp);
-
+		
+		// 다른이름으로 저장 하위 메뉴들(GIF)
 		JMenuItem saveAsGif = new JMenuItem("GIF로 저장");
 		saveAsGif.addActionListener(e -> saveAsWithFormat("gif"));
 		saveAsGif.setToolTipText("GIF로 저장합니다.");
@@ -486,7 +515,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		
 		closeMenuItem.setMnemonic(KeyEvent.VK_E);
-		closeMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
+		closeMenuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
 		closeMenuItem.setToolTipText("프로그램을 종료 합니다.");
 		closeMenuItem.addActionListener(this);
 		
@@ -495,6 +525,17 @@ public class MainFrame extends JFrame implements ActionListener {
 		//JMenu 보기
 		JMenu viewMenu = new JMenu("보기(V)");
 		menuBar.add(viewMenu);
+		viewMenu.setMnemonic(KeyEvent.VK_V);
+		
+		//눈금자
+		JCheckBoxMenuItem showRulerItem = new JCheckBoxMenuItem("눈금자(R)");
+		viewMenu.add(showRulerItem);
+		showRulerItem.setSelected(false);
+		
+		//격자
+		JCheckBoxMenuItem showGridItem = new JCheckBoxMenuItem("격자(G)");
+		viewMenu.add(showGridItem);
+		showGridItem.setSelected(false);
 		
 		//JCheckBoxMenuItem 상태바 보기(보기 하위메뉴)
 		JCheckBoxMenuItem showMenuItem = new JCheckBoxMenuItem("상태바 보기(S)");
@@ -514,9 +555,12 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 		});
 		
+		
+		
 		//JMenu 도구
 		JMenu toolMenu = new JMenu("도구(T)");
 		menuBar.add(toolMenu);
+		toolMenu.setMnemonic(KeyEvent.VK_T);
 		
 		//JMenuItem 점(도구 하위메뉴)
 		JMenuItem dotMenuItem = new JMenuItem(MENU_TOOL_DOT);
@@ -599,7 +643,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		else {
 			for(int i=0; i<colorButtons.length; i++) {
-				//이거로 선택된 색을 옆에 있는 색으로 변경
+				//선택된 색을 옆에 있는 색 버튼도 선택된 색으로 변경
 				if(colorButtons[i].equals(e.getSource())) {
 					selectColorButton.setBackground(
 							colorButtons[i].getBackground());
