@@ -2,42 +2,33 @@ import java.awt.Color;
 import java.awt.Point;
 
 public class Rectangle {
-	private Point topLeft;
-	private int width;
-	private int height;
+	
+	private Point start;
+    private Point end;
     private Color color;
     private int thickness;
-
-    public Rectangle(Point topLeft, int width, int height, Color color, int thickness) {
-        this.topLeft = topLeft;
-        this.width = width;
-        this.height = height;
+    
+    public Rectangle(Point start, Point end, Color color, int thickness) {
+        this.start = start;
+        this.end = end;
         this.color = color;
         this.thickness = thickness;
     }
 
-	public Point getTopLeft() {
-		return topLeft;
+	public Point getStart() {
+		return start;
 	}
 
-	public void setTopLeft(Point topLeft) {
-		this.topLeft = topLeft;
+	public void setStart(Point start) {
+		this.start = start;
 	}
 
-	public int getWidth() {
-		return width;
+	public Point getEnd() {
+		return end;
 	}
 
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
+	public void setEnd(Point end) {
+		this.end = end;
 	}
 
 	public Color getColor() {
@@ -56,6 +47,17 @@ public class Rectangle {
 		this.thickness = thickness;
 	}
     
+	public int getWidth() {
+        return Math.abs(end.x - start.x);
+    }
+
+    public int getHeight() {
+        return Math.abs(end.y - start.y);
+    }
+
+    public Point getTopLeft() {
+        return new Point(Math.min(start.x, end.x), Math.min(start.y, end.y));
+    }
     
 
 }

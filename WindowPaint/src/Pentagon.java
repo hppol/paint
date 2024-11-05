@@ -3,28 +3,29 @@ import java.awt.Point;
 import java.awt.Polygon;
 
 public class Pentagon {
-    private Polygon shape;
+	
+	private Point[] points;
     private Color color;
     private int thickness;
-
+    
     public Pentagon(Point[] points, Color color, int thickness) {
+        this.points = points;
         this.color = color;
         this.thickness = thickness;
-        int[] xPoints = new int[5];
-        int[] yPoints = new int[5];
-        for (int i = 0; i < 5; i++) {
-            xPoints[i] = points[i].x;
-            yPoints[i] = points[i].y;
-        }
-        this.shape = new Polygon(xPoints, yPoints, 5);
+    }
+    
+    public Polygon getShape() {
+        int[] xPoints = {points[0].x, points[1].x, points[2].x, points[3].x, points[4].x};
+        int[] yPoints = {points[0].y, points[1].y, points[2].y, points[3].y, points[4].y};
+        return new Polygon(xPoints, yPoints, 5);
     }
 
-	public Polygon getShape() {
-		return shape;
+	public Point[] getPoints() {
+		return points;
 	}
 
-	public void setShape(Polygon shape) {
-		this.shape = shape;
+	public void setPoints(Point[] points) {
+		this.points = points;
 	}
 
 	public Color getColor() {
@@ -42,6 +43,9 @@ public class Pentagon {
 	public void setThickness(int thickness) {
 		this.thickness = thickness;
 	}
+    
+    
+
     
     
 }

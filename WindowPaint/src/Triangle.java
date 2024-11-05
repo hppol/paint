@@ -3,24 +3,29 @@ import java.awt.Point;
 import java.awt.Polygon;
 
 public class Triangle {
-    private Polygon shape;
+	
+	private Point[] points;
     private Color color;
     private int thickness;
-
+    
     public Triangle(Point p1, Point p2, Point p3, Color color, int thickness) {
+        this.points = new Point[]{p1, p2, p3};
         this.color = color;
         this.thickness = thickness;
-        int[] xPoints = {p1.x, p2.x, p3.x};
-        int[] yPoints = {p1.y, p2.y, p3.y};
-        this.shape = new Polygon(xPoints, yPoints, 3);
+    }
+    
+    public Polygon getShape() {
+        int[] xPoints = {points[0].x, points[1].x, points[2].x};
+        int[] yPoints = {points[0].y, points[1].y, points[2].y};
+        return new Polygon(xPoints, yPoints, 3);
     }
 
-	public Polygon getShape() {
-		return shape;
+	public Point[] getPoints() {
+		return points;
 	}
 
-	public void setShape(Polygon shape) {
-		this.shape = shape;
+	public void setPoints(Point[] points) {
+		this.points = points;
 	}
 
 	public Color getColor() {
@@ -38,6 +43,7 @@ public class Triangle {
 	public void setThickness(int thickness) {
 		this.thickness = thickness;
 	}
+    
     
     
 }

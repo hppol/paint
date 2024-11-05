@@ -3,24 +3,29 @@ import java.awt.Point;
 import java.awt.Polygon;
 
 public class Diamond {
-    private Polygon shape;
+
+	private Point[] points;
     private Color color;
     private int thickness;
 
     public Diamond(Point top, Point right, Point bottom, Point left, Color color, int thickness) {
+        this.points = new Point[]{top, right, bottom, left};
         this.color = color;
         this.thickness = thickness;
-        int[] xPoints = {top.x, right.x, bottom.x, left.x};
-        int[] yPoints = {top.y, right.y, bottom.y, left.y};
-        this.shape = new Polygon(xPoints, yPoints, 4);
+    }
+    
+    public Polygon getShape() {
+        int[] xPoints = {points[0].x, points[1].x, points[2].x, points[3].x};
+        int[] yPoints = {points[0].y, points[1].y, points[2].y, points[3].y};
+        return new Polygon(xPoints, yPoints, 4);
     }
 
-	public Polygon getShape() {
-		return shape;
+	public Point[] getPoints() {
+		return points;
 	}
 
-	public void setShape(Polygon shape) {
-		this.shape = shape;
+	public void setPoints(Point[] points) {
+		this.points = points;
 	}
 
 	public Color getColor() {
@@ -38,6 +43,7 @@ public class Diamond {
 	public void setThickness(int thickness) {
 		this.thickness = thickness;
 	}
+    
     
     
 }
