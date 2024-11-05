@@ -66,6 +66,10 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     private List<TextShape> textList = new ArrayList<>();
     private Stack<List<Object>> undoStack = new Stack<>();
     private Stack<List<Object>> redoStack = new Stack<>();
+    private LinkedList<FourPointStar> fourPointStarList = new LinkedList<>();
+    private LinkedList<FivePointStar> fivePointStarList = new LinkedList<>();
+    private LinkedList<SixPointStar> sixPointStarList = new LinkedList<>();
+
     
     public static final int SELECT = 0;
     public static final int POINT = 1;
@@ -78,7 +82,9 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     public static final int HEXAGON = 8;
     public static final int TEXT = 9;
     public static final int ERASER = 10;
-    
+    public static final int FOUR_POINT_STAR = 11;
+    public static final int FIVE_POINT_STAR = 12;
+    public static final int SIX_POINT_STAR = 13;
     
     private Point startPoint = new Point();
     private Point endPoint = new Point();
@@ -112,6 +118,9 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
         currentState.add(new LinkedList<>(pentagonList));
         currentState.add(new LinkedList<>(hexagonList));
         currentState.add(new LinkedList<>(textList));
+        currentState.add(new LinkedList<>(fourPointStarList));
+        currentState.add(new LinkedList<>(fivePointStarList));
+        currentState.add(new LinkedList<>(sixPointStarList));
 
         undoStack.push(currentState);
         redoStack.clear();
@@ -144,6 +153,9 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
         snapshot.add(new LinkedList<>(pentagonList));
         snapshot.add(new LinkedList<>(hexagonList));
         snapshot.add(new LinkedList<>(textList));
+        snapshot.add(new LinkedList<>(fourPointStarList));
+        snapshot.add(new LinkedList<>(fivePointStarList));
+        snapshot.add(new LinkedList<>(sixPointStarList));
         return snapshot;
     }
 
@@ -158,6 +170,9 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
         pentagonList = (LinkedList<Pentagon>) state.get(6);
         hexagonList = (LinkedList<Hexagon>) state.get(7);
         textList = (LinkedList<TextShape>) state.get(8);
+        fourPointStarList = (LinkedList<FourPointStar>) state.get(9);
+        fivePointStarList = (LinkedList<FivePointStar>) state.get(10);
+        sixPointStarList = (LinkedList<SixPointStar>) state.get(11);
         repaint();
     }
 
@@ -233,6 +248,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     }
 
 	@Override
+//	페인트
 	public void paint(Graphics g) {
 		// TODO Auto-generated method stub
 		bufferGraphics.clearRect(0, 0, dim.width, dim.height);
@@ -305,6 +321,24 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
             text.draw(bufferGraphics);
         }
 	    
+	    for (FourPointStar star : fourPointStarList) {
+	    	g2.setColor(star.getColor());
+	        g2.setStroke(new BasicStroke(star.getThickness()));
+	        g2.drawPolygon(star.getShape());
+	    }
+	    
+	    for (FivePointStar star : fivePointStarList) {
+	        g2.setColor(star.getColor());
+	        g2.setStroke(new BasicStroke(star.getThickness()));
+	        g2.drawPolygon(star.getShape());
+	    }
+	    
+	    for (SixPointStar star : sixPointStarList) {
+	        g2.setColor(star.getColor());
+	        g2.setStroke(new BasicStroke(star.getThickness()));
+	        g2.drawPolygon(star.getShape());
+	    }
+	    
 	    g.drawImage(offscreen, 0, 0, this);
 	}
 
@@ -346,6 +380,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	}
 
 	@Override
+//	마우스 프레스
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
@@ -408,9 +443,26 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	                repaint();
 	            }
 	        }
+		else if (drawMode == FOUR_POINT_STAR) {
+			startPoint.setLocation(e.getX(), e.getY());
+	        oldPoint.setLocation(startPoint);
+	    }
+		
+		else if (drawMode == FIVE_POINT_STAR) {
+	        startPoint.setLocation(e.getX(), e.getY());
+	        oldPoint.setLocation(startPoint);
+	    }
+		
+		else if (drawMode == SIX_POINT_STAR) {
+		    startPoint.setLocation(e.getX(), e.getY());
+		    oldPoint.setLocation(startPoint);
+		}
+		
+		
 	}
 
 	@Override
+//	마우스 릴리스
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
@@ -472,11 +524,6 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		else if (drawMode == DIAMOND) {
 			
 			saveState();
-//	        Point top = new Point((startPoint.x + endPoint.x) / 2, startPoint.y);
-//	        Point right = new Point(endPoint.x, (startPoint.y + endPoint.y) / 2);
-//	        Point bottom = new Point((startPoint.x + endPoint.x) / 2, endPoint.y);
-//	        Point left = new Point(startPoint.x, (startPoint.y + endPoint.y) / 2);
-//	        diamondList.add(new Diamond(top, right, bottom, left, currentColor, lineThickness));
 			
 			Point top = new Point((startPoint.x + endPoint.x) / 2, startPoint.y);
 	        Point right = new Point(endPoint.x, (startPoint.y + endPoint.y) / 2);
@@ -493,8 +540,6 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 			
 			saveState();
 			
-//	        Point[] pentagonPoints = calculatePentagonPoints(startPoint, endPoint);
-//	        pentagonList.add(new Pentagon(pentagonPoints, currentColor, lineThickness));
 			
 			Point[] pentagonPoints = calculatePentagonPoints(startPoint, endPoint);
 		    Pentagon pentagon = new Pentagon(pentagonPoints, currentColor, lineThickness);
@@ -505,8 +550,6 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		else if (drawMode == HEXAGON) {
 			
 			saveState();
-//	        Point[] hexagonPoints = calculateHexagonPoints(startPoint, endPoint);
-//	        hexagonList.add(new Hexagon(hexagonPoints, currentColor, lineThickness));
 			
 			
 			Point[] hexagonPoints = calculateHexagonPoints(startPoint, endPoint);
@@ -515,6 +558,29 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		    repaint();
 	    }
 		
+		else if (drawMode == FOUR_POINT_STAR) {
+			saveState();
+			
+			FourPointStar star = new FourPointStar(new Point(startPoint), new Point(endPoint), currentColor, lineThickness);
+	        fourPointStarList.add(star);
+	        takeSnapshot();
+	        repaint();
+		}
+		else if(drawMode == FIVE_POINT_STAR) {
+			saveState();
+	        FivePointStar star = new FivePointStar(new Point(startPoint), new Point(endPoint), currentColor, lineThickness);
+	        fivePointStarList.add(star);
+	        takeSnapshot(); // 상태 저장
+	        repaint();
+	    }
+		
+		else if (drawMode == SIX_POINT_STAR) {
+			saveState();
+		    SixPointStar star = new SixPointStar(new Point(startPoint), new Point(endPoint), currentColor, lineThickness);
+		    sixPointStarList.add(star);
+		    takeSnapshot();
+		    repaint();
+		}
 //		repaint();
 		
 	}
@@ -575,6 +641,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	}
 
 	@Override
+//	마우스 드래그
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
 		Graphics g = getGraphics();
@@ -790,6 +857,35 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	        g.fillRect(e.getX() - size / 2, e.getY() - size / 2, size, size);
 	    }
 	    
+	    else if (drawMode == FOUR_POINT_STAR) {
+	        endPoint = e.getPoint();
+	        
+	        // 이전 별 미리보기 지우기
+	        g.drawPolygon(new FourPointStar(startPoint, oldPoint, currentColor, lineThickness).getShape());
+	        
+	        // 새 별 미리보기 그리기
+	        g.drawPolygon(new FourPointStar(startPoint, endPoint, currentColor, lineThickness).getShape());
+	        oldPoint.setLocation(endPoint); // 위치 갱신
+	    }
+	    
+	    else if (drawMode == FIVE_POINT_STAR) {
+	        endPoint = e.getPoint();
+	        g.drawPolygon(new FivePointStar(startPoint, oldPoint, currentColor, lineThickness).getShape()); // 이전 5점별 지우기
+	        g.drawPolygon(new FivePointStar(startPoint, endPoint, currentColor, lineThickness).getShape()); // 새 5점별 그리기
+	        oldPoint.setLocation(endPoint);
+	    }
+	    
+	    else if (drawMode == SIX_POINT_STAR) {
+	        endPoint = e.getPoint();
+	        
+	        // 이전 미리보기 제거
+	        g.drawPolygon(new SixPointStar(startPoint, oldPoint, currentColor, lineThickness).getShape());
+	        
+	        // 새 미리보기 그리기
+	        g.drawPolygon(new SixPointStar(startPoint, endPoint, currentColor, lineThickness).getShape());
+	        oldPoint.setLocation(endPoint);  // 위치 갱신
+	    }
+	    
 //	    oldPoint.setLocation(endPoint);
 	    g.setPaintMode();
 
@@ -818,6 +914,9 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	    diamondList.clear();
 	    hexagonList.clear();
 	    textList.clear();
+	    fourPointStarList.clear();
+	    fivePointStarList.clear();
+	    sixPointStarList.clear();
 	    repaint();
 	}
 	

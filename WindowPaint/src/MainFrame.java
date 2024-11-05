@@ -68,6 +68,9 @@ public class MainFrame extends JFrame implements ActionListener {
     private final String MENU_TOOL_DIAMOND = "마름모";
     private final String MENU_TOOL_PENTAGON = "오각형";
     private final String MENU_TOOL_HEXAGON = "육각형";
+    private final String MENU_TOOL_FOUR_POINT_STAR = "4점 별";
+    private final String MENU_TOOL_FIVE_POINT_STAR = "5점 별";
+    private final String MENU_TOOL_SIX_POINT_STAR = "6점 별";
 	
 	private JLabel statusBar = null;
 	private Screen screen;
@@ -156,7 +159,20 @@ public class MainFrame extends JFrame implements ActionListener {
                     case 7:
                     	screen.setDrawMode(Screen.HEXAGON);
                     	break;
+                    	
+                    case 8:
+                    	screen.setDrawMode(Screen.FOUR_POINT_STAR);
+                    	break;
+                    	
+                    case 9:
+                    	screen.setDrawMode(Screen.FIVE_POINT_STAR);
+                    	break;
+                    	
+                    case 10:
+                    	screen.setDrawMode(Screen.SIX_POINT_STAR);
+                    	break;
                 }
+                
             });
         }
     }
@@ -188,7 +204,10 @@ public class MainFrame extends JFrame implements ActionListener {
 			    new ImageIcon("res/triangle.png"),
 			    new ImageIcon("res/diamond.png"),
 			    new ImageIcon("res/pentagon.png"),
-			    new ImageIcon("res/hexagon.png")
+			    new ImageIcon("res/hexagon.png"),
+			    new ImageIcon("res/fourstar.png"),
+			    new ImageIcon("res/fivestar.png"),
+			    new ImageIcon("res/sixstar.png")
 		};
 		
 		for (int i = 0; i < icons.length; i++) {
@@ -198,7 +217,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		toolButtons = new JButton[12];
 		// 툴버튼
-		 for (int i = 0; i < 8; i++) {
+		 for (int i = 0; i < 11; i++) {
 			 toolButtons[i] = new JButton(icons[i]);
 			 toolButtons[i].setPreferredSize(new Dimension(20, 20));
 			 toolButtons[i].addActionListener(this);
@@ -207,7 +226,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		    }
 		
 		//빈버튼 만들기
-		for (int i = 8; i < toolButtons.length; i++) {
+		for (int i = 11; i < toolButtons.length; i++) {
 			toolButtons[i] = new JButton();
 			toolButtons[i].setPreferredSize(new Dimension(20, 20));
 		    groupDrawBox.add(toolButtons[i]);
@@ -221,6 +240,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		toolButtons[5].setToolTipText("마름모");
 		toolButtons[6].setToolTipText("오각형");
 		toolButtons[7].setToolTipText("육각형");
+		toolButtons[8].setToolTipText("4점 별");
+		toolButtons[9].setToolTipText("5점 별");
+		toolButtons[10].setToolTipText("6점 별");
 		
 		
 		
@@ -602,7 +624,21 @@ public class MainFrame extends JFrame implements ActionListener {
 		toolMenu.add(hexMenuItem);
 		hexMenuItem.addActionListener(e -> toolButtons[7].doClick());
 		
-				
+		//JMenuItem 4점별(도구 하위메뉴)
+		JMenuItem fourStarMenuItem = new JMenuItem(MENU_TOOL_FOUR_POINT_STAR);
+		toolMenu.add(fourStarMenuItem);
+		fourStarMenuItem.addActionListener(e -> toolButtons[8].doClick());
+		
+		//JMenuItem 5점별(도구 하위메뉴)
+		JMenuItem fiveStarMenuItem = new JMenuItem(MENU_TOOL_FIVE_POINT_STAR);
+		toolMenu.add(fiveStarMenuItem);
+		fiveStarMenuItem.addActionListener(e -> toolButtons[9].doClick());
+		
+		//JMenuItem 6점별(도구 하위메뉴)
+		JMenuItem sixStarMenuItem = new JMenuItem(MENU_TOOL_SIX_POINT_STAR);
+		toolMenu.add(sixStarMenuItem);
+		sixStarMenuItem.addActionListener(e -> toolButtons[10].doClick());
+		
 		
 		return menuBar;
 	}
