@@ -94,7 +94,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
     
     private int drawMode;
     private int lineThickness = 3;
-    private Font textFont = new Font("Monospaced", Font.BOLD, 16);
+    private Font textFont = new Font("Monospaced", Font.BOLD, 30);
     
     public Screen() {
 		// TODO Auto-generated constructor stub
@@ -261,10 +261,10 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 
 		
 		//모든 점 그리기
-		for (Dot dot : dotList) {
-	        bufferGraphics.setColor(dot.getColor());
-	        int diameter = (int)(dot.getThickness() * 2); 
-	        Point p = dot.getPosition();
+		for (Dot d : dotList) {
+	        bufferGraphics.setColor(d.getColor());
+	        int diameter = (int)(d.getThickness() * 2); 
+	        Point p = d.getPosition();
 	        bufferGraphics.fillOval(p.x - diameter / 2, p.y - diameter / 2, diameter, diameter);
 	    }
 		//모든 라인 그리기
@@ -321,18 +321,21 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
             text.draw(bufferGraphics);
         }
 	    
+//	    4점 별 그리기
 	    for (FourPointStar star : fourPointStarList) {
 	    	g2.setColor(star.getColor());
 	        g2.setStroke(new BasicStroke(star.getThickness()));
 	        g2.drawPolygon(star.getShape());
 	    }
 	    
+//	    5점 별 그리기
 	    for (FivePointStar star : fivePointStarList) {
 	        g2.setColor(star.getColor());
 	        g2.setStroke(new BasicStroke(star.getThickness()));
 	        g2.drawPolygon(star.getShape());
 	    }
 	    
+//	    6점 별 그리기
 	    for (SixPointStar star : sixPointStarList) {
 	        g2.setColor(star.getColor());
 	        g2.setStroke(new BasicStroke(star.getThickness()));
@@ -570,7 +573,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 			saveState();
 	        FivePointStar star = new FivePointStar(new Point(startPoint), new Point(endPoint), currentColor, lineThickness);
 	        fivePointStarList.add(star);
-	        takeSnapshot(); // 상태 저장
+	        takeSnapshot();
 	        repaint();
 	    }
 		
@@ -666,54 +669,46 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 		}
 	    else if (drawMode == CIRCLE) {
 	        endPoint = e.getPoint();
-//	        int width = Math.abs(oldPoint.x - startPoint.x);
-//	        int height = Math.abs(oldPoint.y - startPoint.y);
-//	        int x = Math.min(startPoint.x, oldPoint.x);
-//	        int y = Math.min(startPoint.y, oldPoint.y);
-//	        bufferGraphics.drawOval(x, y, width, height);
+
 	    	
 	    	int width = Math.abs(oldPoint.x - startPoint.x);
 	        int height = Math.abs(oldPoint.y - startPoint.y);
 	        int x = Math.min(startPoint.x, oldPoint.x);
 	        int y = Math.min(startPoint.y, oldPoint.y);
-	        g.drawOval(x, y, width, height); // 이전 임시 원 지우기
+	        g.drawOval(x, y, width, height);
 
 	        width = Math.abs(endPoint.x - startPoint.x);
 	        height = Math.abs(endPoint.y - startPoint.y);
 	        x = Math.min(startPoint.x, endPoint.x);
 	        y = Math.min(startPoint.y, endPoint.y);
-	        g.drawOval(x, y, width, height); // 새 위치에 임시 원 그리기
+	        g.drawOval(x, y, width, height);
 		    oldPoint.setLocation(endPoint);
+		    
+//	        bufferGraphics.drawOval(x, y, width, height);
 	    	
 	    } 
 	    
 	    else if (drawMode == RECTANGLE) {
 	        endPoint = e.getPoint();
-//	        int width = Math.abs(endPoint.x - startPoint.x);
-//	        int height = Math.abs(endPoint.y - startPoint.y);
-//	        int x = Math.min(startPoint.x, endPoint.x);
-//	        int y = Math.min(startPoint.y, endPoint.y);
-//	        bufferGraphics.drawRect(x, y, width, height);
 	    	
 	    	int width = Math.abs(oldPoint.x - startPoint.x);
 	        int height = Math.abs(oldPoint.y - startPoint.y);
 	        int x = Math.min(startPoint.x, oldPoint.x);
 	        int y = Math.min(startPoint.y, oldPoint.y);
-	        g.drawRect(x, y, width, height); // 이전 임시 사각형 지우기
+	        g.drawRect(x, y, width, height);
 
 	        width = Math.abs(endPoint.x - startPoint.x);
 	        height = Math.abs(endPoint.y - startPoint.y);
 	        x = Math.min(startPoint.x, endPoint.x);
 	        y = Math.min(startPoint.y, endPoint.y);
-	        g.drawRect(x, y, width, height); // 새 위치에 임시 사각형 그리기
+	        g.drawRect(x, y, width, height);
 		    oldPoint.setLocation(endPoint);
+		    
+//	        bufferGraphics.drawRect(x, y, width, height);
 	    }
 	    
 	    else if (drawMode == TRIANGLE) {
 	        endPoint = e.getPoint();
-//	        int centerX = (startPoint.x + endPoint.x) / 2;
-//	        int baseY = Math.max(startPoint.y, endPoint.y);
-//	        int tipY = Math.min(startPoint.y, endPoint.y);
 //
 //	        int[] xPoints = {startPoint.x, endPoint.x, centerX};
 //	        int[] yPoints = {baseY, baseY, tipY};
@@ -746,14 +741,10 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	    
 	    else if (drawMode == DIAMOND) {
 	        endPoint = e.getPoint();
-//	        Point top = new Point((startPoint.x + endPoint.x) / 2, startPoint.y);
-//	        Point right = new Point(endPoint.x, (startPoint.y + endPoint.y) / 2);
-//	        Point bottom = new Point((startPoint.x + endPoint.x) / 2, endPoint.y);
-//	        Point left = new Point(startPoint.x, (startPoint.y + endPoint.y) / 2);
 //
 //	        int[] xPoints = {top.x, right.x, bottom.x, left.x};
 //	        int[] yPoints = {top.y, right.y, bottom.y, left.y};
-//	        bufferGraphics.drawPolygon(xPoints, yPoints, 4);  // 마름모는 4개의 점으로 이루어짐
+//	        bufferGraphics.drawPolygon(xPoints, yPoints, 4);
 	        
 	        Point top = new Point((startPoint.x + oldPoint.x) / 2, startPoint.y);
 	        Point right = new Point(oldPoint.x, (startPoint.y + oldPoint.y) / 2);
@@ -791,7 +782,7 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 //	        int[] xPoints = new int[5];
 //	        int[] yPoints = new int[5];
 //	        for (int i = 0; i < 5; i++) {
-//	            double angle = Math.toRadians(72 * i - 90); // 각 점의 각도 계산
+//	            double angle = Math.toRadians(72 * i - 90);
 //	            xPoints[i] = centerX + (int) (radius * Math.cos(angle));
 //	            yPoints[i] = centerY + (int) (radius * Math.sin(angle));
 //	        }
@@ -799,16 +790,32 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	        
 	        Point[] oldPentagonPoints = calculatePentagonPoints(startPoint, oldPoint);
 	        Polygon oldPentagon = new Polygon(
-	            new int[]{oldPentagonPoints[0].x, oldPentagonPoints[1].x, oldPentagonPoints[2].x, oldPentagonPoints[3].x, oldPentagonPoints[4].x},
-	            new int[]{oldPentagonPoints[0].y, oldPentagonPoints[1].y, oldPentagonPoints[2].y, oldPentagonPoints[3].y, oldPentagonPoints[4].y},
+	            new int[]{oldPentagonPoints[0].x,
+	            		oldPentagonPoints[1].x,
+	            		oldPentagonPoints[2].x,
+	            		oldPentagonPoints[3].x,
+	            		oldPentagonPoints[4].x},
+	            new int[]{oldPentagonPoints[0].y,
+	            		oldPentagonPoints[1].y,
+	            		oldPentagonPoints[2].y,
+	            		oldPentagonPoints[3].y,
+	            		oldPentagonPoints[4].y},
 	            5
 	        );
 	        g.drawPolygon(oldPentagon);
 
 	        Point[] newPentagonPoints = calculatePentagonPoints(startPoint, endPoint);
 	        Polygon newPentagon = new Polygon(
-	            new int[]{newPentagonPoints[0].x, newPentagonPoints[1].x, newPentagonPoints[2].x, newPentagonPoints[3].x, newPentagonPoints[4].x},
-	            new int[]{newPentagonPoints[0].y, newPentagonPoints[1].y, newPentagonPoints[2].y, newPentagonPoints[3].y, newPentagonPoints[4].y},
+	            new int[]{newPentagonPoints[0].x,
+	            		newPentagonPoints[1].x,
+	            		newPentagonPoints[2].x,
+	            		newPentagonPoints[3].x,
+	            		newPentagonPoints[4].x},
+	            new int[]{newPentagonPoints[0].y,
+	            		newPentagonPoints[1].y,
+	            		newPentagonPoints[2].y,
+	            		newPentagonPoints[3].y,
+	            		newPentagonPoints[4].y},
 	            5
 	        );
 	        g.drawPolygon(newPentagon);
@@ -833,16 +840,36 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	        
 	        Point[] oldHexagonPoints = calculateHexagonPoints(startPoint, oldPoint);
 	        Polygon oldHexagon = new Polygon(
-	            new int[]{oldHexagonPoints[0].x, oldHexagonPoints[1].x, oldHexagonPoints[2].x, oldHexagonPoints[3].x, oldHexagonPoints[4].x, oldHexagonPoints[5].x},
-	            new int[]{oldHexagonPoints[0].y, oldHexagonPoints[1].y, oldHexagonPoints[2].y, oldHexagonPoints[3].y, oldHexagonPoints[4].y, oldHexagonPoints[5].y},
+	            new int[]{oldHexagonPoints[0].x,
+	            		oldHexagonPoints[1].x,
+	            		oldHexagonPoints[2].x,
+	            		oldHexagonPoints[3].x,
+	            		oldHexagonPoints[4].x,
+	            		oldHexagonPoints[5].x},
+	            new int[]{oldHexagonPoints[0].y,
+	            		oldHexagonPoints[1].y,
+	            		oldHexagonPoints[2].y,
+	            		oldHexagonPoints[3].y,
+	            		oldHexagonPoints[4].y,
+	            		oldHexagonPoints[5].y},
 	            6
 	        );
 	        g.drawPolygon(oldHexagon);
 
 	        Point[] newHexagonPoints = calculateHexagonPoints(startPoint, endPoint);
 	        Polygon newHexagon = new Polygon(
-	            new int[]{newHexagonPoints[0].x, newHexagonPoints[1].x, newHexagonPoints[2].x, newHexagonPoints[3].x, newHexagonPoints[4].x, newHexagonPoints[5].x},
-	            new int[]{newHexagonPoints[0].y, newHexagonPoints[1].y, newHexagonPoints[2].y, newHexagonPoints[3].y, newHexagonPoints[4].y, newHexagonPoints[5].y},
+	            new int[]{newHexagonPoints[0].x,
+	            		newHexagonPoints[1].x,
+	            		newHexagonPoints[2].x,
+	            		newHexagonPoints[3].x,
+	            		newHexagonPoints[4].x,
+	            		newHexagonPoints[5].x},
+	            new int[]{newHexagonPoints[0].y,
+	            		newHexagonPoints[1].y,
+	            		newHexagonPoints[2].y,
+	            		newHexagonPoints[3].y,
+	            		newHexagonPoints[4].y,
+	            		newHexagonPoints[5].y},
 	            6
 	        );
 	        g.drawPolygon(newHexagon);
@@ -860,30 +887,26 @@ public class Screen extends Canvas implements ComponentListener, MouseListener, 
 	    else if (drawMode == FOUR_POINT_STAR) {
 	        endPoint = e.getPoint();
 	        
-	        // 이전 별 미리보기 지우기
 	        g.drawPolygon(new FourPointStar(startPoint, oldPoint, currentColor, lineThickness).getShape());
 	        
-	        // 새 별 미리보기 그리기
 	        g.drawPolygon(new FourPointStar(startPoint, endPoint, currentColor, lineThickness).getShape());
-	        oldPoint.setLocation(endPoint); // 위치 갱신
+	        oldPoint.setLocation(endPoint);
 	    }
 	    
 	    else if (drawMode == FIVE_POINT_STAR) {
 	        endPoint = e.getPoint();
-	        g.drawPolygon(new FivePointStar(startPoint, oldPoint, currentColor, lineThickness).getShape()); // 이전 5점별 지우기
-	        g.drawPolygon(new FivePointStar(startPoint, endPoint, currentColor, lineThickness).getShape()); // 새 5점별 그리기
+	        g.drawPolygon(new FivePointStar(startPoint, oldPoint, currentColor, lineThickness).getShape());
+	        g.drawPolygon(new FivePointStar(startPoint, endPoint, currentColor, lineThickness).getShape());
 	        oldPoint.setLocation(endPoint);
 	    }
 	    
 	    else if (drawMode == SIX_POINT_STAR) {
 	        endPoint = e.getPoint();
 	        
-	        // 이전 미리보기 제거
 	        g.drawPolygon(new SixPointStar(startPoint, oldPoint, currentColor, lineThickness).getShape());
 	        
-	        // 새 미리보기 그리기
 	        g.drawPolygon(new SixPointStar(startPoint, endPoint, currentColor, lineThickness).getShape());
-	        oldPoint.setLocation(endPoint);  // 위치 갱신
+	        oldPoint.setLocation(endPoint);
 	    }
 	    
 //	    oldPoint.setLocation(endPoint);

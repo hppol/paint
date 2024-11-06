@@ -588,56 +588,67 @@ public class MainFrame extends JFrame implements ActionListener {
 		JMenuItem dotMenuItem = new JMenuItem(MENU_TOOL_DOT);
 		toolMenu.add(dotMenuItem);
 		dotMenuItem.addActionListener(e -> toolButtons[0].doClick());
+		dotMenuItem.setToolTipText("점을 선택합니다.");
 		
 		//JMenuItem 선(도구 하위메뉴)
 		JMenuItem lineMenuItem = new JMenuItem(MENU_TOOL_LINE);
 		toolMenu.add(lineMenuItem);
 		lineMenuItem.addActionListener(e -> toolButtons[1].doClick());
+		lineMenuItem.setToolTipText("선을 선택합니다.");
 		
 		//JMenuItem 원(도구 하위메뉴)
 		JMenuItem circleMenuItem = new JMenuItem(MENU_TOOL_CIRCLE);
 		toolMenu.add(circleMenuItem);
 		circleMenuItem.addActionListener(e -> toolButtons[2].doClick());
+		circleMenuItem.setToolTipText("원을 선택합니다.");
 		
 		//JMenuItem 네모(도구 하위메뉴)
 		JMenuItem rectMenuItem = new JMenuItem(MENU_TOOL_SQUARE);
 		toolMenu.add(rectMenuItem);
 		rectMenuItem.addActionListener(e -> toolButtons[3].doClick());
+		rectMenuItem.setToolTipText("네모를 선택합니다.");
 		
 		//JMenuItem 세모(도구 하위메뉴)
 		JMenuItem triMenuItem = new JMenuItem(MENU_TOOL_TRIANGLE);
 		toolMenu.add(triMenuItem);
 		triMenuItem.addActionListener(e -> toolButtons[4].doClick());
+		triMenuItem.setToolTipText("세모를 선택합니다.");
 		
 		//JMenuItem 마름모(도구 하위메뉴)
 		JMenuItem diaMenuItem = new JMenuItem(MENU_TOOL_DIAMOND);
 		toolMenu.add(diaMenuItem);
 		diaMenuItem.addActionListener(e -> toolButtons[5].doClick());
+		diaMenuItem.setToolTipText("마름모를 선택합니다.");
 		
 		//JMenuItem 오각형(도구 하위메뉴)
 		JMenuItem pentMenuItem = new JMenuItem(MENU_TOOL_PENTAGON);
 		toolMenu.add(pentMenuItem);
 		pentMenuItem.addActionListener(e -> toolButtons[6].doClick());
+		pentMenuItem.setToolTipText("오각형을 선택합니다.");
 		
 		//JMenuItem 육각형(도구 하위메뉴)
 		JMenuItem hexMenuItem = new JMenuItem(MENU_TOOL_HEXAGON);
 		toolMenu.add(hexMenuItem);
 		hexMenuItem.addActionListener(e -> toolButtons[7].doClick());
+		hexMenuItem.setToolTipText("육각형을 선택합니다.");
 		
 		//JMenuItem 4점별(도구 하위메뉴)
 		JMenuItem fourStarMenuItem = new JMenuItem(MENU_TOOL_FOUR_POINT_STAR);
 		toolMenu.add(fourStarMenuItem);
 		fourStarMenuItem.addActionListener(e -> toolButtons[8].doClick());
+		fourStarMenuItem.setToolTipText("4점 별을 선택합니다.");
 		
 		//JMenuItem 5점별(도구 하위메뉴)
 		JMenuItem fiveStarMenuItem = new JMenuItem(MENU_TOOL_FIVE_POINT_STAR);
 		toolMenu.add(fiveStarMenuItem);
 		fiveStarMenuItem.addActionListener(e -> toolButtons[9].doClick());
+		fiveStarMenuItem.setToolTipText("5점 별을 선택합니다.");
 		
 		//JMenuItem 6점별(도구 하위메뉴)
 		JMenuItem sixStarMenuItem = new JMenuItem(MENU_TOOL_SIX_POINT_STAR);
 		toolMenu.add(sixStarMenuItem);
 		sixStarMenuItem.addActionListener(e -> toolButtons[10].doClick());
+		sixStarMenuItem.setToolTipText("6점 별을 선택합니다.");
 		
 		
 		return menuBar;
